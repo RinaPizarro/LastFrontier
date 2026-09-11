@@ -18,7 +18,7 @@ def main():
             continue
         else:
             print(message)
-            break
+            return # stop the program
 
 if __name__ == "__main__":
     main()
