@@ -33,8 +33,7 @@ def main():
         else:
             break
 
-    print("done!")
-
+    print("Thank you for interacting with LastFrontier. Goodbye!")
 
 if __name__ == "__main__":
     main()
