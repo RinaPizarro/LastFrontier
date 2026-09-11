@@ -1,4 +1,3 @@
-
 # Endpoints: Current Weather Data, Weather Alert Detailed Information
 
 import requests
