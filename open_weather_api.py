@@ -59,6 +59,8 @@ def current_weather_api(
 def output_headers_list(output):
     columns_headers = []
 
+    columns_headers.append("Time")
+
     for i in output:
         if isinstance(output[i], dict):
             keys_list = list(output[i].keys())
@@ -78,6 +80,10 @@ def output_headers_list(output):
 # map column headers to values from JSON
 def output_values_list(output):
     column_values = []
+
+    alaska_time = datetime.now(ZoneInfo("America/Anchorage"))
+    utc_time_format = alaska_time.isoformat(timespec="seconds")
+    column_values.append(utc_time_format)
 
     for value in output.values():
         if isinstance(value, dict):
@@ -105,4 +111,3 @@ def output_to_dict(headers_output, values_output):
                     my_dict[i] = j
 
     return True, my_dict
-

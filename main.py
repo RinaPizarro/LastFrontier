@@ -6,10 +6,7 @@ def main():
 
     # Validate city
     while w.city_in_alaska(user_city) is None:
-        user_city = input(
-            "That city does not exist or is not located in Alaska. "
-            "Please try another city: "
-        )
+        user_city = input("That city does not exist or is not located in Alaska. Please try another city: ")
 
     lat, lon = w.lat_and_long(city_name=user_city)
 
