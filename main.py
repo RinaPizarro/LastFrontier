@@ -70,8 +70,10 @@ def main():
 
     user_table = input("\nLet's create our table. What is your table name? ")
 
+    output = s.get_data_types(conn=conn_output, data=weather_dict_output)
+
     while True:
-        status, message = s.create_table(db_connection=conn_output, table_name=user_table, columns_dict=weather_dict_output)
+        status, message = s.create_table(db_connection=conn_output, table_name=user_table, columns_dict=output)
         if status == True:
             break
         else:
