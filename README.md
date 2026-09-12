@@ -7,3 +7,6 @@ LastFrontier is a data-ingestion program that retrieves data from OpenWeather an
 - pip install geopy
 - pip install country_state_city
 - pip install psycopg2 
+- import json
+- import datetime
+- import zoneinfo
