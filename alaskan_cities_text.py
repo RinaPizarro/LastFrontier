@@ -1,6 +1,7 @@
 import open_weather_api as w
 from validation import exit_input, valid_input
 from colorama import Fore, Back, Style, init
+from customizable import delay_print
 
 # Remove whitespaces, remove empty lines in alaskan_cities.txt
 def clean_file():
@@ -38,7 +39,7 @@ def line_count():
 
 # Print lines in file
 def print_lines(lines):
-    print("This is the list of current cities:")
+    delay_print("\nThis is the list of current cities:")
     for line in lines:
         print(line)
 
@@ -81,7 +82,7 @@ def all_cities_list():
     print_lines(lines)
 
     while True:
-        print(Fore.LIGHTBLUE_EX, end="")
+        print(Fore.LIGHTBLUE_EX, end="\n")
         confirm = valid_input(
             "Would you like to add a city (y/n): " + Style.RESET_ALL
         )

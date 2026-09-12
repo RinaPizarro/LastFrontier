@@ -1,8 +1,6 @@
 import sys
 from colorama import Fore, Back, Style, init
 
-init() # initialize colorama
-
 def valid_input(prompt):
     while True:
         user_input = input(prompt).strip().lower()

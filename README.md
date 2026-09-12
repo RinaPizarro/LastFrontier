@@ -10,3 +10,5 @@ LastFrontier is a data-ingestion program that retrieves data from OpenWeather an
 - import json
 - import datetime
 - import zoneinfo
+- import time
+- import sys

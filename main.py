@@ -3,9 +3,14 @@ import sql_server as s
 import alaskan_cities_text as a
 from validation import exit_input
 from colorama import Fore, Back, Style, init
-
+from customizable import delay_print
 
 def main():
+
+    init() # initialize colorama
+
+    delay_print("Welcome to LastFrontier. Let's begin by importing the weather into our database.")
+
     my_list = a.all_cities_list()
 
     while True:
@@ -32,7 +37,7 @@ def main():
         else:
             break
 
-    print("\nLet's connect to the LastFrontier database and import our weather information.")
+    delay_print("\nLet's connect to the LastFrontier database and import our weather information.")
 
     while True:
         print(Fore.LIGHTBLUE_EX, end="")
@@ -65,9 +70,9 @@ def main():
             print(conn_output)
             return
 
-    user_table = exit_input(
+    user_table = delay_print(exit_input(
         "\nLet's see if our table exists. What is your table name? "
-    )
+    ))
     user_table = user_table.lower()
 
     # Use the weather data we already retrieved when checking the API key.
