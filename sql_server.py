@@ -16,6 +16,9 @@ def connection(username, password, host):
     except psycopg2.OperationalError as e:
         return False, f"Connection failed: {e}"
 
+def find_table():
+    pass
+
 def create_table(db_connection, table_name, columns_dict):
     try:
         cursor = db_connection.cursor()
