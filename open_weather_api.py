@@ -1,6 +1,3 @@
-
-# Endpoints: Current Weather Data, Weather Alert Detailed Information
-
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -8,7 +5,7 @@ from country_state_city import Country, State, City
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-# Check if city is in Alaska
+
 def city_in_alaska(city_name):
     cities = City.get_cities_of_state('US', 'AK')
 
@@ -18,7 +15,7 @@ def city_in_alaska(city_name):
 
     return None
 
-# Return latitude and longtitude of city
+
 def lat_and_long(
         city_name,
         state_name="Alaska"): 
@@ -29,7 +26,7 @@ def lat_and_long(
 
     return str(location["lat"]), str(location["lon"])
 
-# make HTTP request for Open Weather API
+
 def current_weather_api(
         lat, 
         lon, 
@@ -46,44 +43,57 @@ def current_weather_api(
         "lang": lang
     }
 
-    response = requests.get(url,params)
+    response = requests.get(url, params)
+
     if response.status_code == 200:
         json_format = response.json()
         return True, json_format
+
     elif response.status_code == 401:
         return False, "The API key does not work."
+
     else:
         return None, "Unable to retrieve weather. Please try again later."
 
-# turns JSON output from current_weather_api() to list of headers
+
 def output_headers_list(output):
     columns_headers = []
 
-    columns_headers.append("Time")
+    columns_headers.append("time")
 
     for i in output:
         if isinstance(output[i], dict):
             keys_list = list(output[i].keys())
+
             for key in keys_list:
                 columns_headers.append(f'{i}.{key}')
+
         elif isinstance(output[i], list):
             for j in range(len(output[i])):
                 if isinstance(output[i][j], dict):
                     keys_list = list(output[i][j].keys())
+
                     for key in keys_list:
                         columns_headers.append(f'{i}.{key}')
+
         else:
             columns_headers.append(f'{i}')
 
     return columns_headers
 
-# map column headers to values from JSON
+
 def output_values_list(output):
     column_values = []
 
-    alaska_time = datetime.now(ZoneInfo("America/Anchorage"))
-    utc_time_format = alaska_time.isoformat(timespec="seconds")
-    column_values.append(utc_time_format)
+    alaska_time = datetime.now(
+        ZoneInfo("America/Anchorage")
+    )
+
+    alaska_time_format = alaska_time.isoformat(
+        timespec="seconds"
+    )
+
+    column_values.append(alaska_time_format)
 
     for value in output.values():
         if isinstance(value, dict):
@@ -99,15 +109,11 @@ def output_values_list(output):
 
     return column_values
 
-def output_to_dict(headers_output, values_output):
-    my_dict = {}
 
+def output_to_dict(headers_output, values_output):
     if len(headers_output) != len(values_output):
         return None, "There is not enough values for the existing columns."
-    else:
-        for i in headers_output:
-            for j in values_output:
-                if headers_output.index(i) == values_output.index(j):
-                    my_dict[i] = j
+
+    my_dict = dict(zip(headers_output, values_output))
 
     return True, my_dict
