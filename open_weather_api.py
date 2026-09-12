@@ -15,7 +15,6 @@ def city_in_alaska(city_name):
 
     return None
 
-
 def lat_and_long(
         city_name,
         state_name="Alaska"): 

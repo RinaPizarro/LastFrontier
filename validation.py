@@ -18,5 +18,12 @@ def valid_input(prompt):
 
 # Input is Exit
 def exit_input(user_input):
+    user_input = input(user_input).strip()
+
     if user_input.lower() == "exit":
-       sys.exit()
+        print(
+            "\nThank you for using the Data.gov dataset importer. Goodbye!"
+        )
+        sys.exit(0)
+
+    return user_input

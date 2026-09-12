@@ -1,5 +1,5 @@
 import open_weather_api as w
-import validation as val
+from validation import exit_input, valid_input
 
 # Remove whitespaces, remove empty lines in alaskan_cities.txt
 def clean_file():
@@ -53,11 +53,11 @@ def remove_invalid_cities(lines):
 
 # Add city to file
 def add_city():
-    user_city = input("Enter a city in Alaska: ").strip()
+    user_city = exit_input("Enter a city in Alaska: ").strip()
 
     while w.city_in_alaska(user_city) is None:
         print("That city does not exist or is not located in Alaska.")
-        user_city = input("Please try another city: ").strip()
+        user_city =exit_input("Please try another city: ").strip()
 
     with open("alaskan_cities.txt", "a") as file:
         file.write(user_city + "\n")
@@ -76,7 +76,7 @@ def all_cities_list():
     print_lines(lines)
 
     while True:
-        confirm = val.valid_input(
+        confirm = valid_input(
             "Would you like to add a city (y/n): "
         )
 

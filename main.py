@@ -1,13 +1,13 @@
 import open_weather_api as w
 import sql_server as s
 import alaskan_cities_text as a
-import validation as val
+from validation import exit_input
 
 def main():
     my_list = a.all_cities_list()
 
     while True:
-        api_key = input("Please enter your API Key: ")
+        api_key = exit_input("Please enter your API Key: ")
 
         lat, lon = w.lat_and_long(city_name=my_list[0])
 
@@ -31,9 +31,9 @@ def main():
     print("\nLet's connect to the LastFrontier database and import our weather information.")
 
     while True:
-        user_host = input("\nEnter host: ")
-        user_name = input("Enter username: ")
-        user_password = input("Enter password: ")
+        user_host = exit_input("\nEnter host: ")
+        user_name = exit_input("Enter username: ")
+        user_password = exit_input("Enter password: ")
 
         status, conn_output = s.connection(
             username=user_name,
@@ -54,7 +54,7 @@ def main():
             print(conn_output)
             return
 
-    user_table = input("\nLet's see if our table exists. What is your table name? ")
+    user_table = exit_input("\nLet's see if our table exists. What is your table name? ")
     user_table = user_table.lower()
 
     city = my_list[0]
