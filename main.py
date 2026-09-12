@@ -1,7 +1,27 @@
 import open_weather_api as w
 import sql_server as s
+import alaskan_cities_text as a
+import validation as val
 
 def main():
+    
+    lines = a.clean_file()
+    a.remove_invalid_cities(lines)
+
+    if a.line_count() == 0:
+        print("There are no cities listed. Go ahead and add a city: ")
+    else:
+        a.print_lines(lines=lines)
+
+    while True:
+        user_input = input("Would you like to add a city (y/n): ")
+
+        if user_input.lower() == "n":
+            break
+        elif user_input.lower() == "y":
+            pass
+
+
     user_city = input("Enter a city in Alaska: ")
 
     while w.city_in_alaska(user_city) is None:
