@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2 import sql, OperationalError
 
-
+# Connect to PostgreSQL Database
 def connection(username, password, host):
     try:
         connection = psycopg2.connect(
@@ -17,7 +17,7 @@ def connection(username, password, host):
     except psycopg2.OperationalError as e:
         return False, f"Connection failed: {e}"
 
-
+# Check if table already exists in DB
 def find_table(db_connection, table_name, schema='public'):
     try:
         cursor = db_connection.cursor()
@@ -41,7 +41,7 @@ def find_table(db_connection, table_name, schema='public'):
         print(f"Error checking table existence: {e}")
         return False
 
-
+# Provides list of pre-detemined list of data types for JSON output 
 def postgres_type(column_name, value):
 
     if column_name == "Time":
@@ -62,6 +62,7 @@ def postgres_type(column_name, value):
     else:
         return "TEXT"
 
+# Create new table in DB
 def create_table(db_connection, table_name, columns_dict):
     try:
         cursor = db_connection.cursor()
@@ -97,44 +98,7 @@ def create_table(db_connection, table_name, columns_dict):
         db_connection.rollback()
         return False, str(error)
 
-
-def insert_weather_data(db_connection, table_name, row):
-    try:
-        cursor = db_connection.cursor()
-
-        column_names = [
-            sql.Identifier(column)
-            for column in row.keys()
-        ]
-
-        values = list(row.values())
-
-        placeholders = sql.SQL(", ").join(
-            sql.Placeholder()
-            for _ in values
-        )
-
-        insert_sql = sql.SQL(
-            """
-            INSERT INTO {} ({})
-            VALUES ({})
-            """
-        ).format(
-            sql.Identifier(table_name),
-            sql.SQL(", ").join(column_names),
-            placeholders
-        )
-
-        cursor.execute(insert_sql, values)
-        db_connection.commit()
-        cursor.close()
-
-        return True, "Weather data inserted."
-
-    except Exception as error:
-        db_connection.rollback()
-        return False, str(error)
-
+# inserts weather data
 def insert_data(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()

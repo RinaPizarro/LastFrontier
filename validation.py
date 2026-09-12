@@ -1,4 +1,7 @@
 import sys
+from colorama import Fore, Back, Style, init
+
+init() # initialize colorama
 
 def valid_input(prompt):
     while True:
@@ -14,7 +17,7 @@ def valid_input(prompt):
             return "n"
 
         else:
-            print("That is not a valid input. Please try again.")
+            print(Fore.LIGHTRED_EX + "That is not a valid input. Please try again.\n" + Style.RESET_ALL)
 
 # Input is Exit
 def exit_input(user_input):

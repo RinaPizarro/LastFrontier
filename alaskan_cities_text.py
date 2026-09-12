@@ -1,5 +1,6 @@
 import open_weather_api as w
 from validation import exit_input, valid_input
+from colorama import Fore, Back, Style, init
 
 # Remove whitespaces, remove empty lines in alaskan_cities.txt
 def clean_file():
@@ -12,7 +13,7 @@ def clean_file():
 
     return lines
 
-# remove duplicates in file
+# Remove duplicates in file
 def remove_duplicates(lines):
     unique_cities = []
     seen = set()
@@ -53,11 +54,13 @@ def remove_invalid_cities(lines):
 
 # Add city to file
 def add_city():
-    user_city = exit_input("Enter a city in Alaska: ").strip()
+    print(Fore.LIGHTBLUE_EX, end="")
+    user_city = exit_input("Enter a city in Alaska: " + Style.RESET_ALL).strip()
 
     while w.city_in_alaska(user_city) is None:
+        print(Fore.LIGHTRED_EX, end="")
         print("That city does not exist or is not located in Alaska.")
-        user_city =exit_input("Please try another city: ").strip()
+        user_city =exit_input("Please try another city: " + Style.RESET_ALL).strip()
 
     with open("alaskan_cities.txt", "a") as file:
         file.write(user_city + "\n")
@@ -69,15 +72,18 @@ def all_cities_list():
     lines = remove_duplicates(lines)
 
     if line_count() == 0:
+        print(Fore.LIGHTBLUE_EX, end="")
         print("There are no cities listed. We need to have at least one city in our list.")
+        print(Style.RESET_ALL)
         add_city()
         lines = clean_file()
 
     print_lines(lines)
 
     while True:
+        print(Fore.LIGHTBLUE_EX, end="")
         confirm = valid_input(
-            "Would you like to add a city (y/n): "
+            "Would you like to add a city (y/n): " + Style.RESET_ALL
         )
 
         if confirm == "y":
