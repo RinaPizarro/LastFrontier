@@ -1,3 +1,4 @@
+
 # Endpoints: Current Weather Data, Weather Alert Detailed Information
 
 import requests
@@ -98,6 +99,8 @@ def output_to_dict(headers_output, values_output):
     else:
         for i in headers_output:
             for j in values_output:
-                my_dict[i] = j
+                if headers_output.index(i) == values_output.index(j):
+                    my_dict[i] = j
 
     return True, my_dict
+
