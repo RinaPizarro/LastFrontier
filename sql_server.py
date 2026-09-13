@@ -194,14 +194,22 @@ def create_or_insert(db_connection, table_name, data_dict):
         if status is False:
             return False, message
 
-        print(
-            Fore.LIGHTGREEN_EX
-            + message
-            + Style.RESET_ALL
+        table_message = message
+
+    else:
+
+        table_message = (
+            f"Table '{table_name}' exists. "
+            "Inserting data to table."
         )
 
-    return insert_data(
+    success, message = insert_data(
         db_connection=db_connection,
         table_name=table_name,
         data_dict=data_dict
     )
+
+    if success is False:
+        return False, message
+
+    return True, table_message

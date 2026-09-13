@@ -5,12 +5,12 @@ from validation import exit_input, valid_input
 from colorama import Fore, Back, Style, init
 from customizable import delay_print
 
-# Remove whitespaces, remove empty lines in alaskan_cities.txt
+# Remove whitespaces, remove empty lines in user_user_alaskan_cities.txt
 def clean_file():
-    with open("alaskan_cities.txt", "r") as f:
+    with open("user_alaskan_cities.txt", "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    with open("alaskan_cities.txt", "w") as f:
+    with open("user_alaskan_cities.txt", "w") as f:
         for line in lines:
             f.write(line + "\n")
 
@@ -28,7 +28,7 @@ def remove_duplicates(lines):
             seen.add(key)
             unique_cities.append(city.title())
 
-    with open("alaskan_cities.txt", "w") as f:
+    with open("user_alaskan_cities.txt", "w") as f:
         for city in unique_cities:
             f.write(city + "\n")
 
@@ -36,7 +36,7 @@ def remove_duplicates(lines):
 
 # Count number of lines in file
 def line_count():
-    with open("alaskan_cities.txt") as f:
+    with open("user_alaskan_cities.txt") as f:
         return sum(1 for _ in f)
 
 # Print lines in file
@@ -51,7 +51,7 @@ def remove_invalid_cities(lines):
         if not w.city_in_alaska(line):
             lines.remove(line)
 
-    with open("alaskan_cities.txt", "w") as f:
+    with open("user_alaskan_cities.txt", "w") as f:
         for line in lines:
             f.write(line + "\n")
 
@@ -65,7 +65,7 @@ def add_city():
         print("That city does not exist or is not located in Alaska.")
         user_city =exit_input("Please try another city: " + Style.RESET_ALL).strip()
 
-    with open("alaskan_cities.txt", "a") as file:
+    with open("user_alaskan_cities.txt", "a") as file:
         file.write(user_city + "\n")
 
 # Returns list of all cities we want to retrieve weather APIs for

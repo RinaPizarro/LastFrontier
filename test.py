@@ -2,7 +2,7 @@
 
 import open_weather_api as w
 from datetime import datetime
-import sql_cities_table as ss
+import alaskan_cities_table as ss
 import list_functions as func
 
 lat = 61.2163

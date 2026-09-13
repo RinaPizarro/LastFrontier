@@ -1,6 +1,6 @@
 import open_weather_api as w
 import sql_server as s
-import alaskan_cities_text as a
+import user_alaskan_cities as a
 
 from validation import exit_input
 from colorama import Fore, Style, init
@@ -141,9 +141,10 @@ def main():
         )
 
     success = weather_table(
-        db_connection=conn_output,
-        api_key=api_key
-    )
+    db_connection=conn_output,
+    api_key=api_key,
+    cities_list=my_list
+)
 
     if success is False:
 
@@ -157,7 +158,8 @@ def main():
 
     success = air_pollution_table(
         db_connection=conn_output,
-        api_key=api_key
+        api_key=api_key,
+        cities_list=my_list
     )
 
     if success is False:

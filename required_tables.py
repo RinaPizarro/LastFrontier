@@ -1,6 +1,6 @@
 
-from sql_cities_table import sql_cities_table, alaskan_cities, alaskan_city_coord
-from alaskan_cities_text import all_cities_list
+from alaskan_cities_table import alaskan_cities, alaskan_city_coord
+from user_alaskan_cities import all_cities_list
 from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
 from sql_server import create_or_insert
 from colorama import Fore, Style, init
@@ -26,8 +26,9 @@ def cities_table(db_connection):
     print("alaskan_cities table has been created.")
 
 # This table contains weather information of all user selected Alaskan cities from alaskan_cities.txt
-def weather_table(db_connection, api_key):
-    cities_list = all_cities_list()
+def weather_table(db_connection, api_key, cities_list):
+
+    table_message_shown = False
 
     for city in cities_list:
 
@@ -47,16 +48,14 @@ def weather_table(db_connection, api_key):
         )
 
         if lat is None or lon is None:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"Unable to find coordinates for {city}."
                 + Style.RESET_ALL
             )
-
             continue
 
-        # Get weather data from API
+        # Get weather data
         status, weather_output = current_weather_api(
             lat=lat,
             lon=lon,
@@ -64,21 +63,18 @@ def weather_table(db_connection, api_key):
         )
 
         if status is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"Weather API key failed for {city}."
                 + Style.RESET_ALL
             )
-
             return False
 
         elif status is None:
-
             print(weather_output)
             return False
 
-        # Convert API output into headers and values
+        # Convert API output
         weather_headers = output_headers_list(
             output=weather_output
         )
@@ -87,24 +83,21 @@ def weather_table(db_connection, api_key):
             output=weather_output
         )
 
-        # Convert headers and values into dictionary
         status, weather_data = output_to_dict(
             headers_output=weather_headers,
             values_output=weather_values
         )
 
         if status is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"Unable to process weather data for {city}."
                 + Style.RESET_ALL
             )
-
             print(weather_data)
             continue
 
-        # Insert weather data into database
+        # Insert weather data
         success, message = create_or_insert(
             db_connection=db_connection,
             table_name="weather",
@@ -112,15 +105,24 @@ def weather_table(db_connection, api_key):
         )
 
         if success is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"{city} weather was not inserted."
                 + Style.RESET_ALL
             )
-
             print(message)
             continue
+
+        # Print table status only once
+        if table_message_shown is False:
+
+            print(
+                Fore.LIGHTYELLOW_EX
+                + message
+                + Style.RESET_ALL
+            )
+
+            table_message_shown = True
 
         print(
             Fore.LIGHTGREEN_EX
@@ -128,17 +130,11 @@ def weather_table(db_connection, api_key):
             + Style.RESET_ALL
         )
 
-    print(
-        Fore.LIGHTGREEN_EX
-        + "\nWeather table has been created."
-        + Style.RESET_ALL
-    )
-
     return True
 
 # This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
-def air_pollution_table(db_connection, api_key):
-    cities_list = all_cities_list()
+def air_pollution_table(db_connection, api_key, cities_list):
+    table_message_shown = False
 
     for city in cities_list:
 
@@ -158,16 +154,14 @@ def air_pollution_table(db_connection, api_key):
         )
 
         if lat is None or lon is None:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"Unable to find coordinates for {city}."
                 + Style.RESET_ALL
             )
-
             continue
 
-        # Get air pollution data from API
+        # Get air pollution data
         status, pollution_output = air_pollution_api(
             lat=lat,
             lon=lon,
@@ -175,21 +169,18 @@ def air_pollution_table(db_connection, api_key):
         )
 
         if status is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"Air pollution API key failed for {city}."
                 + Style.RESET_ALL
             )
-
             return False
 
         elif status is None:
-
             print(pollution_output)
             return False
 
-        # Convert API output into headers and values
+        # Convert API output
         pollution_headers = output_headers_list(
             output=pollution_output
         )
@@ -198,24 +189,21 @@ def air_pollution_table(db_connection, api_key):
             output=pollution_output
         )
 
-        # Convert headers and values into dictionary
         status, pollution_data = output_to_dict(
             headers_output=pollution_headers,
             values_output=pollution_values
         )
 
         if status is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"Unable to process air pollution data for {city}."
                 + Style.RESET_ALL
             )
-
             print(pollution_data)
             continue
 
-        # Insert air pollution data into database
+        # Insert air pollution data
         success, message = create_or_insert(
             db_connection=db_connection,
             table_name="air_pollution",
@@ -223,26 +211,29 @@ def air_pollution_table(db_connection, api_key):
         )
 
         if success is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + f"{city} air pollution was not inserted."
                 + Style.RESET_ALL
             )
-
             print(message)
             continue
+
+        # Print table status only once
+        if table_message_shown is False:
+
+            print(
+                Fore.LIGHTMAGENTA_EX
+                + message
+                + Style.RESET_ALL
+            )
+
+            table_message_shown = True
 
         print(
             Fore.LIGHTGREEN_EX
             + f"{city} air pollution imported successfully."
             + Style.RESET_ALL
         )
-
-    print(
-        Fore.LIGHTGREEN_EX
-        + "\nAir pollution table has been created."
-        + Style.RESET_ALL
-    )
 
     return True
