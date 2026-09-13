@@ -4,7 +4,6 @@ from geopy.geocoders import Nominatim
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-
 def city_in_alaska(city_name):
     cities = City.get_cities_of_state('US', 'AK')
 
@@ -13,7 +12,6 @@ def city_in_alaska(city_name):
             return city
 
     return None
-
 
 def lat_and_long(
         city_name,
@@ -37,6 +35,7 @@ def lat_and_long(
         str(location.latitude),
         str(location.longitude)
     )
+
 
 
 def universal_time():
