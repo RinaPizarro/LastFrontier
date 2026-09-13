@@ -1,7 +1,7 @@
 import open_weather_api as w
 import sql_server as s
 import user_cities as a
-import src.cities_table as ac
+import cities_table as ac
 
 from validation import exit_input
 from colorama import Fore, Style, init
