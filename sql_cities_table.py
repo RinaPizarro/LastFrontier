@@ -16,36 +16,45 @@ def all_alaskan_cities():
 #FIXME This needs to be a dictionary not a list
 def all_alaskan_coord(
     city_list,
-    state_name="Alaska"):
+    state_name="Alaska"
+):
 
     client = Nominatim(
         user_agent="last_frontier"
     )
 
-    safe_client = RateLimiter(client.geocode, min_delay_seconds=1)
+    safe_client = RateLimiter(
+        client.geocode,
+        min_delay_seconds=1
+    )
 
     full_dict = {}
+
     try:
         for city_name in city_list:
 
-            try: 
-                city_dict = {}
-                city_state_name = f'{city_name}, {state_name}'
+            try:
+                city_state_name = f"{city_name}, {state_name}"
 
                 location = safe_client(
                     city_state_name,
                     timeout=10,
                 )
 
-                city_dict["name"] = city_name
-                city_dict["coord.lon"] = location.longitude
-                city_dict["coord.lan"] = str(location.latitude)
-                full_dict.update(city_dict)
+                city_dict = {
+                    "name": city_name,
+                    "coord": {
+                        "lon": location.longitude,
+                        "lat": location.latitude
+                    }
+                }
+
+                full_dict[city_name] = city_dict
+
                 print(full_dict)
-                print(city_dict)
- 
-            except AttributeError as a:
-                # Skip city_name is coordinates do not exist 
+
+            except AttributeError:
+                # Skip city_name if coordinates do not exist
                 continue
 
         return full_dict
