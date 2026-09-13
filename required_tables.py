@@ -1,4 +1,3 @@
-
 from alaskan_cities_table import alaskan_cities, alaskan_city_coord
 from user_alaskan_cities import all_cities_list
 from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
@@ -12,18 +11,92 @@ from list_functions import output_headers_list, output_values_list, output_to_di
 # air_pollution
 
 # This table contains Alaskan cities name, latitude, and longtitude
-def cities_table(db_connection):
-    cities_list = alaskan_cities()
+def cities_table(db_connection, cities_list):
+    table_message_shown = False
 
     for city in cities_list:
-        try:
-            city_dict = alaskan_city_coord(city)
-            create_or_insert(db_connection=db_connection, table_name="alaskan_cities", data_dict=city_dict)
-        except AttributeError as a:
-            print("Cannot process {city}")
+
+        print(
+            Fore.LIGHTBLUE_EX,
+            end=""
+        )
+
+        print(
+            f"\nGetting data for {city}..."
+            + Style.RESET_ALL
+        )
+
+        # Get city coordinates
+        city_output = alaskan_city_coord(city)
+
+        if city_output is None:
+            print(
+                Fore.LIGHTRED_EX
+                + f"Unable to find coordinates for {city}."
+                + Style.RESET_ALL
+            )
             continue
 
-    print("alaskan_cities table has been created.")
+        # Convert API output
+        city_headers = output_headers_list(
+            output=city_output
+        )
+
+        city_values = output_values_list(
+            output=city_output
+        )
+
+        success, city_data = output_to_dict(
+            headers_output=city_headers,
+            values_output=city_values
+        )
+
+        if success is False:
+            print(
+                Fore.LIGHTRED_EX
+                + f"Unable to process city data for {city}."
+                + Style.RESET_ALL
+            )
+            print(city_data)
+            continue
+
+        # Insert city data
+        success, message = create_or_insert(
+            db_connection=db_connection,
+            table_name="alaskan_cities",
+            data_dict=city_data
+        )
+
+        if success is False:
+            print(
+                Fore.LIGHTRED_EX
+                + f"{city} was not inserted."
+                + Style.RESET_ALL
+            )
+            print(message)
+            continue
+
+        # Print table status only once
+        if table_message_shown is False:
+
+            print(
+                Fore.LIGHTYELLOW_EX
+                + message
+                + Style.RESET_ALL
+            )
+
+            table_message_shown = True
+
+        print(
+            Fore.LIGHTGREEN_EX
+            + f"{city} imported successfully."
+            + Style.RESET_ALL
+        )
+
+    print("alaskan_cities table has been processed.")
+
+    return True
+
 
 # This table contains weather information of all user selected Alaskan cities from alaskan_cities.txt
 def weather_table(db_connection, api_key, cities_list):
@@ -132,6 +205,7 @@ def weather_table(db_connection, api_key, cities_list):
 
     return True
 
+
 # This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
 def air_pollution_table(db_connection, api_key, cities_list):
     table_message_shown = False
@@ -223,7 +297,7 @@ def air_pollution_table(db_connection, api_key, cities_list):
         if table_message_shown is False:
 
             print(
-                Fore.LIGHTMAGENTA_EX
+                Fore.LIGHTYELLOW_EX
                 + message
                 + Style.RESET_ALL
             )

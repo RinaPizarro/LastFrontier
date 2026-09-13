@@ -1,6 +1,7 @@
 import open_weather_api as w
 import sql_server as s
 import user_alaskan_cities as a
+import alaskan_cities_table as ac
 
 from validation import exit_input
 from colorama import Fore, Style, init
@@ -8,7 +9,8 @@ from customizable import delay_print
 
 from required_tables import (
     weather_table,
-    air_pollution_table
+    air_pollution_table,
+    cities_table
 )
 
 def main():
@@ -21,6 +23,7 @@ def main():
     )
 
     my_list = a.all_cities_list()
+    all_list = ac.alaskan_cities()
 
     # Get and validate API key
 
@@ -140,11 +143,26 @@ def main():
             + Style.RESET_ALL
         )
 
+    success = cities_table(
+        db_connection=conn_output,
+        cities_list=all_list
+    )
+
+    if success is False:
+
+        print(
+            Fore.LIGHTRED_EX
+            + "Cities table import failed."
+            + Style.RESET_ALL
+        )
+
+        return
+
     success = weather_table(
-    db_connection=conn_output,
-    api_key=api_key,
-    cities_list=my_list
-)
+        db_connection=conn_output,
+        api_key=api_key,
+        cities_list=my_list
+    )
 
     if success is False:
 

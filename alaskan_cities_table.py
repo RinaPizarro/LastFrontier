@@ -36,8 +36,6 @@ def alaskan_city_coord(
             }
         }
 
-        print(city_dict)
-
         return city_dict
 
     except AttributeError:
