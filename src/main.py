@@ -1,7 +1,7 @@
 import open_weather_api as w
 import sql_server as s
-import user_alaskan_cities as a
-import alaskan_cities_table as ac
+import user_cities as a
+import cities_table as ac
 
 from validation import exit_input
 from colorama import Fore, Style, init
@@ -37,68 +37,35 @@ def main():
                 + "Unable to find city coordinates."
                 + Style.RESET_ALL
             )
-
             return 
 
-        status, output = w.current_weather_api(
-            lat=lat,
-            lon=lon,
-            api_key=api_key
-        )
+        status, output = w.current_weather_api(lat=lat, lon=lon, api_key=api_key)
 
         if status is False:
-
             print(
                 Fore.LIGHTRED_EX
                 + "That key did not work. Please try a different key.\n"
                 + Style.RESET_ALL
             )
-
             continue
 
         elif status is None:
-
             print(output)
             return
 
         break
 
-    delay_print(
-        "\nLet's connect to the LastFrontier database "
-        "and import our weather information."
-    )
+    delay_print("\nLet's connect to the LastFrontier database and import our weather information.")
 
     while True:
+        print(Fore.LIGHTBLUE_EX, end="")
+        user_host = exit_input("\nEnter host: " + Style.RESET_ALL)
 
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
+        print(Fore.LIGHTBLUE_EX, end="")
+        user_name = exit_input("Enter username: " + Style.RESET_ALL)
 
-        user_host = exit_input(
-            "\nEnter host: "
-            + Style.RESET_ALL
-        )
-
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
-
-        user_name = exit_input(
-            "Enter username: "
-            + Style.RESET_ALL
-        )
-
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
-
-        user_password = exit_input(
-            "Enter password: "
-            + Style.RESET_ALL
-        )
+        print(Fore.LIGHTBLUE_EX, end="")
+        user_password = exit_input("Enter password: " + Style.RESET_ALL)
 
         status, conn_output = s.connection(
             username=user_name,
@@ -107,7 +74,6 @@ def main():
         )
 
         if status is True:
-
             print(
                 Fore.LIGHTGREEN_EX
                 + "Connected successfully!"
@@ -134,13 +100,11 @@ def main():
     )
 
     if success is False:
-
         print(
             Fore.LIGHTRED_EX
             + "Cities table import failed."
             + Style.RESET_ALL
         )
-
         return
 
     success = weather_table(
@@ -150,13 +114,11 @@ def main():
     )
 
     if success is False:
-
         print(
             Fore.LIGHTRED_EX
             + "Weather table import failed."
             + Style.RESET_ALL
         )
-
         return
 
     success = air_pollution_table(
@@ -166,13 +128,11 @@ def main():
     )
 
     if success is False:
-
         print(
             Fore.LIGHTRED_EX
             + "Air pollution table import failed."
             + Style.RESET_ALL
         )
-
         return
 
     print(
@@ -181,10 +141,7 @@ def main():
         + Style.RESET_ALL
     )
 
-    print(
-        "\nThank you for interacting with LastFrontier. Goodbye!"
-    )
-
+    print("\nThank you for interacting with LastFrontier. Goodbye!")
 
 if __name__ == "__main__":
     main()

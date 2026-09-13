@@ -3,7 +3,7 @@ from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.exc import GeocoderRateLimited
 
-import list_functions as func
+import column_functions as func
 import sql_server as s
 
 def alaskan_cities():
@@ -13,7 +13,7 @@ def alaskan_cities():
     for city in cities:
         cities_list.append(city.name)
 
-    return cities_list[:5]
+    return cities_list
 
 def alaskan_city_coord(
     city_name,
