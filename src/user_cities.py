@@ -51,7 +51,7 @@ def print_lines(lines):
 # Remove non-Alaskan cities from file
 def remove_invalid_cities(lines):
     for line in lines[:]:
-        if not w.city_in_alaska(line):
+        if not w.verify_city(line):
             lines.remove(line)
 
     with open(FILE_PATH, "w") as f:
@@ -62,7 +62,7 @@ def remove_invalid_cities(lines):
 def add_city():
     user_city = exit_input("Enter a city in Alaska: ").strip()
 
-    while w.city_in_alaska(user_city) is None:
+    while w.verify_city(user_city) is None:
         print("That city does not exist or is not located in Alaska.")
         user_city =exit_input("Please try another city: ").strip()
 
