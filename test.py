@@ -6,7 +6,7 @@ from datetime import datetime
 
 lat = 61.2163
 lon = -149.8949
-app = "c56045956e647d6e796f18982704d1d2"
+app = ""
 print(w.alaska_time_unix())
 
 status, message = w.air_pollution_api(lat,lon,app)
