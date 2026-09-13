@@ -8,10 +8,6 @@ lat = 61.2163
 lon = -149.8949
 app = "c56045956e647d6e796f18982704d1d2"
 print(w.alaska_time_unix())
-response = (w.road_risk_api(
-    lat=lat,
-    lon=lon,
-    api_key=app
-))
-print(response.status_code)
-print(response.text)
+
+status, message = w.air_pollution_api(lat,lon,app)
+print(message)

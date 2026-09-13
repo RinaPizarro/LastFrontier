@@ -74,24 +74,29 @@ def current_weather_api(
     else:
         return None, "Unable to retrieve weather. Please try again later."
 
-def road_risk_api(
+def air_pollution_api(
         lat, 
         lon, 
-        api_key,
-    ):
+        api_key):
 
-    url = "https://api.openweathermap.org/data/2.5/roadrisk"
-    dt = alaska_time_unix()
-
+    url = "http://api.openweathermap.org/data/2.5/air_pollution"
     params = {
-            "lat": lat,
-            "lon": lon,
-            "appid": api_key,
-            "dt": dt
-        }
-    
-    response = requests.get(url, params=params)
-    return response
+        "lat": lat,
+        "lon": lon,
+        "appid": api_key
+    }
+
+    response = requests.get(url, params)
+
+    if response.status_code == 200:
+        json_format = response.json()
+        return True, json_format
+
+    elif response.status_code == 401:
+        return False, "The API key does not work."
+
+    else:
+        return None, "Unable to retrieve weather. Please try again later."
 
 def output_headers_list(output):
     columns_headers = []
