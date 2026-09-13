@@ -4,8 +4,9 @@ from geopy.extra.rate_limiter import RateLimiter
 from geopy.exc import GeocoderRateLimited
 
 import list_functions as func
+import sql_server as s
 
-def all_alaskan_cities():
+def alaskan_cities():
     cities = City.get_cities_of_state('US', 'AK')
     cities_list = []
     for city in cities:
@@ -13,7 +14,7 @@ def all_alaskan_cities():
 
     return cities_list[:5]
 
-def all_alaskan_coord(
+def alaskan_city_coord(
     city_name,
     state_name="Alaska"
     ):
@@ -51,7 +52,7 @@ def all_alaskan_coord(
 
         return None
 
-def alaskan_list(my_list):
+def alaskan_cities_list(my_list):
     headers_list = func.output_headers_list(output=my_list)
     values_list = func.output_values_list(output=my_list)
     headers_values_list = func.output_to_dict(headers_output=headers_list,values_output=values_list)

@@ -1,11 +1,15 @@
 import open_weather_api as w
 import sql_server as s
 import alaskan_cities_text as a
-import list_functions as l
 
 from validation import exit_input
 from colorama import Fore, Style, init
-from customizable import delay_print, loading_city_animation
+from customizable import delay_print
+
+from required_tables import (
+    weather_table,
+    air_pollution_table
+)
 
 def main():
 
@@ -17,6 +21,8 @@ def main():
     )
 
     my_list = a.all_cities_list()
+
+    # Get and validate API key
 
     while True:
 
@@ -30,16 +36,19 @@ def main():
             + Style.RESET_ALL
         )
 
+        # Test the API key using the first city
         lat, lon = w.lat_and_long(
             city_name=my_list[0]
         )
 
         if lat is None or lon is None:
+
             print(
                 Fore.LIGHTRED_EX
                 + "Unable to find city coordinates."
                 + Style.RESET_ALL
             )
+
             return
 
         status, output = w.current_weather_api(
@@ -131,154 +140,45 @@ def main():
             + Style.RESET_ALL
         )
 
-    for city in my_list:
+    success = weather_table(
+        db_connection=conn_output,
+        api_key=api_key
+    )
+
+    if success is False:
 
         print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
-
-        print(
-            f"\nGetting data for {city}..."
+            Fore.LIGHTRED_EX
+            + "Weather table import failed."
             + Style.RESET_ALL
         )
 
-        lat, lon = w.lat_and_long(
-            city_name=city
-        )
+        return
 
-        if lat is None or lon is None:
+    success = air_pollution_table(
+        db_connection=conn_output,
+        api_key=api_key
+    )
 
-            print(
-                Fore.LIGHTRED_EX
-                + f"Unable to find coordinates for {city}."
-                + Style.RESET_ALL
-            )
-
-            continue
-
-        status, weather_output = w.current_weather_api(
-            lat=lat,
-            lon=lon,
-            api_key=api_key
-        )
-
-        if status is False:
-
-            print(
-                Fore.LIGHTRED_EX
-                + f"Weather API key failed for {city}."
-                + Style.RESET_ALL
-            )
-
-            return
-
-        elif status is None:
-
-            print(weather_output)
-            return
-
-        weather_headers = l.output_headers_list(
-            output=weather_output
-        )
-
-        weather_values = l.output_values_list(
-            output=weather_output
-        )
-
-        status, weather_data = l.output_to_dict(
-            headers_output=weather_headers,
-            values_output=weather_values
-        )
-
-        if status is False:
-
-            print(weather_data)
-            return
-
-        status, pollution_output = w.air_pollution_api(
-            lat=lat,
-            lon=lon,
-            api_key=api_key
-        )
-
-        if status is False:
-
-            print(
-                Fore.LIGHTRED_EX
-                + f"Air pollution API key failed for {city}."
-                + Style.RESET_ALL
-            )
-
-            return
-
-        elif status is None:
-
-            print(pollution_output)
-            return
-
-        pollution_headers = l.output_headers_list(
-            output=pollution_output
-        )
-
-        pollution_values = l.output_values_list(
-            output=pollution_output
-        )
-
-        status, pollution_data = l.output_to_dict(
-            headers_output=pollution_headers,
-            values_output=pollution_values
-        )
-
-        if status is False:
-
-            print(pollution_data)
-            return
-
-        success, message = loading_city_animation(
-            city,
-            lambda: s.create_or_insert(
-                db_connection=conn_output,
-                table_name="weather",
-                data_dict=weather_data
-            )
-        )
-
-        if success is False:
-
-            print(
-                Fore.LIGHTRED_EX
-                + f"{city} weather was not inserted."
-                + Style.RESET_ALL
-            )
-
-            print(message)
-            return
-
-        success, message = s.create_or_insert(
-            db_connection=conn_output,
-            table_name="air_pollution",
-            data_dict=pollution_data
-        )
-
-        if success is False:
-
-            print(
-                Fore.LIGHTRED_EX
-                + f"{city} air pollution was not inserted."
-                + Style.RESET_ALL
-            )
-
-            print(message)
-            return
+    if success is False:
 
         print(
-            Fore.LIGHTGREEN_EX
-            + f"{city} has been imported successfully."
+            Fore.LIGHTRED_EX
+            + "Air pollution table import failed."
             + Style.RESET_ALL
         )
 
-    print("\nThank you for interacting with LastFrontier. Goodbye!")
+        return
+
+    print(
+        Fore.LIGHTGREEN_EX
+        + "\nAll data has been imported successfully!"
+        + Style.RESET_ALL
+    )
+
+    print(
+        "\nThank you for interacting with LastFrontier. Goodbye!"
+    )
 
 
 if __name__ == "__main__":
