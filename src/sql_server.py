@@ -1,6 +1,5 @@
 import psycopg2
 from psycopg2 import sql
-from colorama import Fore, Style
 
 required_tables = ["alaskan_cities", "weather", "air_pollution"]
 

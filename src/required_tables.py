@@ -1,8 +1,8 @@
-from src.cities_table import alaskan_cities, alaskan_city_coord
-from src.user_cities import all_cities_list
+from cities_table import alaskan_cities, alaskan_city_coord
+from user_cities import all_cities_list
 from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
 from sql_server import create_or_insert
-from src.column_functions import output_headers_list, output_values_list, output_to_dict
+from column_functions import output_headers_list, output_values_list, output_to_dict
 from colorama import Fore, Style, init
 
 # REQUIRED TABLES:
@@ -167,7 +167,6 @@ def weather_table(db_connection, api_key, cities_list):
         )
 
     return True
-
 
 # This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
 def air_pollution_table(db_connection, api_key, cities_list):
