@@ -1,9 +1,9 @@
-from alaskan_cities_table import alaskan_cities, alaskan_city_coord
-from user_alaskan_cities import all_cities_list
+from src.cities_table import alaskan_cities, alaskan_city_coord
+from src.user_cities import all_cities_list
 from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
 from sql_server import create_or_insert
+from src.column_functions import output_headers_list, output_values_list, output_to_dict
 from colorama import Fore, Style, init
-from list_functions import output_headers_list, output_values_list, output_to_dict
 
 # REQUIRED TABLES:
 # alaskan_cities
@@ -16,25 +16,13 @@ def cities_table(db_connection, cities_list):
 
     for city in cities_list:
 
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
-
-        print(
-            f"\nGetting data for {city}..."
-            + Style.RESET_ALL
-        )
+        print(f"\nGetting data for {city}...")
 
         # Get city coordinates
         city_output = alaskan_city_coord(city)
 
         if city_output is None:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Unable to find coordinates for {city}."
-                + Style.RESET_ALL
-            )
+            print(f"Unable to find coordinates for {city}.")
             continue
 
         # Convert API output
@@ -52,11 +40,7 @@ def cities_table(db_connection, cities_list):
         )
 
         if success is False:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Unable to process city data for {city}."
-                + Style.RESET_ALL
-            )
+            print(f"Unable to process city data for {city}.")
             print(city_data)
             continue
 
@@ -68,30 +52,18 @@ def cities_table(db_connection, cities_list):
         )
 
         if success is False:
-            print(
-                Fore.LIGHTRED_EX
-                + f"{city} was not inserted."
-                + Style.RESET_ALL
-            )
+            print(f"{city} was not inserted.")
             print(message)
             continue
 
         # Print table status only once
         if table_message_shown is False:
 
-            print(
-                Fore.LIGHTYELLOW_EX
-                + message
-                + Style.RESET_ALL
-            )
+            print(message)
 
             table_message_shown = True
 
-        print(
-            Fore.LIGHTGREEN_EX
-            + f"{city} imported successfully."
-            + Style.RESET_ALL
-        )
+        print(f"{city} imported successfully.")
 
     print("alaskan_cities table has been processed.")
 
@@ -105,15 +77,7 @@ def weather_table(db_connection, api_key, cities_list):
 
     for city in cities_list:
 
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
-
-        print(
-            f"\nGetting data for {city}..."
-            + Style.RESET_ALL
-        )
+        print(f"\nGetting data for {city}...")
 
         # Get city coordinates
         lat, lon = lat_and_long(
@@ -122,7 +86,6 @@ def weather_table(db_connection, api_key, cities_list):
 
         if lat is None or lon is None:
             print(
-                Fore.LIGHTRED_EX
                 + f"Unable to find coordinates for {city}."
                 + Style.RESET_ALL
             )
