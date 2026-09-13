@@ -1,3 +1,5 @@
+# Module for handling connection to PostgreSQL Server and creation/ insertion of tables
+
 import psycopg2
 from psycopg2 import sql, OperationalError
 

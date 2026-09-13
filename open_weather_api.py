@@ -28,6 +28,17 @@ def lat_and_long(
 
     return str(location["lat"]), str(location["lon"])
 
+def alaska_time():
+    alaska_time = datetime.now(
+        ZoneInfo("America/Anchorage")
+    )
+    
+    alaska_time_format = alaska_time.isoformat(
+        timespec="seconds"
+    )
+
+    return alaska_time_format
+
 # Get current weather
 def current_weather_api(
         lat, 
@@ -56,6 +67,16 @@ def current_weather_api(
 
     else:
         return None, "Unable to retrieve weather. Please try again later."
+
+def road_risk_api(
+        lat, 
+        lon, 
+        api_key,
+        dt 
+    ):
+
+    url = "https://api.openweathermap.org/data/2.5/roadrisk"
+
 
 
 def output_headers_list(output):
@@ -87,15 +108,9 @@ def output_headers_list(output):
 def output_values_list(output):
     column_values = []
 
-    alaska_time = datetime.now(
-        ZoneInfo("America/Anchorage")
-    )
+    alaska_timestamp = alaska_time()
 
-    alaska_time_format = alaska_time.isoformat(
-        timespec="seconds"
-    )
-
-    column_values.append(alaska_time_format)
+    column_values.append(alaska_timestamp)
 
     for value in output.values():
         if isinstance(value, dict):
@@ -110,7 +125,6 @@ def output_values_list(output):
             column_values.append(value)
 
     return column_values
-
 
 def output_to_dict(headers_output, values_output):
     if len(headers_output) != len(values_output):

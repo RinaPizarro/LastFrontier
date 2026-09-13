@@ -1,3 +1,5 @@
+# Module for customizing text color and animation
+
 import time
 import sys
 

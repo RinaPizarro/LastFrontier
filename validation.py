@@ -1,3 +1,5 @@
+# Module for validating user input
+
 import sys
 from colorama import Fore, Back, Style, init
 

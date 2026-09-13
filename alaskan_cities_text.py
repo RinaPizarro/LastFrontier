@@ -1,3 +1,5 @@
+# Module for handling alaska_cities.txt file
+
 import open_weather_api as w
 from validation import exit_input, valid_input
 from colorama import Fore, Back, Style, init
