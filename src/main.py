@@ -2,10 +2,12 @@ import open_weather_api as w
 import sql_server as s
 import user_cities as a
 import cities_table as ac
+import os
 
 from validation import exit_input
 from colorama import Fore, Style, init
 from customizable import delay_print
+from dotenv import load_dotenv
 
 from required_tables import (
     weather_table,
@@ -15,6 +17,7 @@ from required_tables import (
 
 def main():
     init() # intialize colorama
+    load_dotenv() # load .env file
 
     delay_print("Welcome to LastFrontier. Let's import data into our database.")
 
