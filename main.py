@@ -1,6 +1,7 @@
 import open_weather_api as w
 import sql_server as s
 import alaskan_cities_text as a
+import list_functions as l
 
 from validation import exit_input
 from colorama import Fore, Style, init
@@ -177,15 +178,15 @@ def main():
             print(weather_output)
             return
 
-        weather_headers = w.output_headers_list(
+        weather_headers = l.output_headers_list(
             output=weather_output
         )
 
-        weather_values = w.output_values_list(
+        weather_values = l.output_values_list(
             output=weather_output
         )
 
-        status, weather_data = w.output_to_dict(
+        status, weather_data = l.output_to_dict(
             headers_output=weather_headers,
             values_output=weather_values
         )
@@ -216,15 +217,15 @@ def main():
             print(pollution_output)
             return
 
-        pollution_headers = w.output_headers_list(
+        pollution_headers = l.output_headers_list(
             output=pollution_output
         )
 
-        pollution_values = w.output_values_list(
+        pollution_values = l.output_values_list(
             output=pollution_output
         )
 
-        status, pollution_data = w.output_to_dict(
+        status, pollution_data = l.output_to_dict(
             headers_output=pollution_headers,
             values_output=pollution_values
         )
