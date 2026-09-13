@@ -12,3 +12,7 @@ LastFrontier is a data-ingestion program that retrieves data from OpenWeather an
 - import zoneinfo
 - import time
 - import sys
+
+## Files Explained
+### alaskan_cities.txt
+This file contains the list of all cities expected to be used when retrieving weather data from the API. 
