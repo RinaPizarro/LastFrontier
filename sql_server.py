@@ -2,6 +2,7 @@
 
 import psycopg2
 from psycopg2 import sql, OperationalError
+from open_weather_api import required_tables
 
 # Connect to PostgreSQL Database
 def connection(username, password, host):
@@ -176,3 +177,6 @@ def insert_data(db_connection, table_name, data_dict):
     except Exception as error:
         db_connection.rollback()
         return False, str(error)
+
+def setup_required_tables():
+    pass

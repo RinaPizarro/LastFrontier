@@ -7,6 +7,8 @@ from country_state_city import Country, State, City
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+required_tables = ["weather", "air_pollution"] # REQUIRED FOR DB SETUP
+
 # Check if city is in Alaska
 def city_in_alaska(city_name):
     cities = City.get_cities_of_state('US', 'AK')
