@@ -22,7 +22,6 @@ def all_alaskan_coord(
     safe_client = RateLimiter(client.geocode, min_delay_seconds=1)
 
     my_list = []
-
     try:
         for city_name in city_list:
 
@@ -40,13 +39,12 @@ def all_alaskan_coord(
                 city_dict["coord.lan"] = str(location.latitude)
                 my_list.append(city_dict)
                 print(my_list)
-
+ 
             except AttributeError as a:
                 # Skip city_name is coordinates do not exist 
                 continue
 
         return my_list
-
     
     except GeocoderRateLimited as e:
         print(f"Rate limited: {e}")

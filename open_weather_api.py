@@ -36,8 +36,6 @@ def lat_and_long(
         str(location.longitude)
     )
 
-
-
 def universal_time():
     universal_time = datetime.now(timezone.utc)
 
@@ -79,7 +77,6 @@ def current_weather_api(
             "Please try again later."
         )
 
-
 def air_pollution_api(
         lat,
         lon,
@@ -112,7 +109,6 @@ def air_pollution_api(
             "Unable to retrieve air pollution. "
             "Please try again later."
         )
-
 
 def output_headers_list(output):
     columns_headers = []
