@@ -1,7 +1,7 @@
 import open_weather_api as w
 import sql_server as s
 import user_cities as a
-import cities_table as ac
+import src.cities_table as ac
 
 from validation import exit_input
 from colorama import Fore, Style, init
@@ -16,7 +16,7 @@ from required_tables import (
 def main():
     init() # intialize colorama
 
-    delay_print("Welcome to LastFrontier. Let's import data into our database")
+    delay_print("Welcome to LastFrontier. Let's import data into our database.")
 
     user_list = a.all_cities_list()
     head_list = ac.alaskan_cities()
