@@ -14,45 +14,31 @@ from required_tables import (
 )
 
 def main():
+    init() # intialize colorama
 
-    init()
+    delay_print("Welcome to LastFrontier. Let's import data into our database")
 
-    delay_print(
-        "Welcome to LastFrontier. "
-        "Let's begin by importing the weather into our database."
-    )
-
-    my_list = a.all_cities_list()
-    all_list = ac.alaskan_cities()
+    user_list = a.all_cities_list()
+    head_list = ac.alaskan_cities()
 
     # Get and validate API key
-
     while True:
 
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
-        )
+        print(Fore.LIGHTBLUE_EX, end="")
 
-        api_key = exit_input(
-            "Please enter your API Key: "
-            + Style.RESET_ALL
-        )
+        api_key = exit_input("Please enter your API Key: " + Style.RESET_ALL)
 
         # Test the API key using the first city
-        lat, lon = w.lat_and_long(
-            city_name=my_list[0]
-        )
+        lat, lon = w.lat_and_long(city_name=user_list[0])
 
         if lat is None or lon is None:
-
             print(
                 Fore.LIGHTRED_EX
                 + "Unable to find city coordinates."
                 + Style.RESET_ALL
             )
 
-            return
+            return 
 
         status, output = w.current_weather_api(
             lat=lat,
@@ -64,8 +50,7 @@ def main():
 
             print(
                 Fore.LIGHTRED_EX
-                + "That key did not work. "
-                "Please try a different key.\n"
+                + "That key did not work. Please try a different key.\n"
                 + Style.RESET_ALL
             )
 
@@ -145,7 +130,7 @@ def main():
 
     success = cities_table(
         db_connection=conn_output,
-        cities_list=all_list
+        cities_list=head_list
     )
 
     if success is False:
@@ -161,7 +146,7 @@ def main():
     success = weather_table(
         db_connection=conn_output,
         api_key=api_key,
-        cities_list=my_list
+        cities_list=user_list
     )
 
     if success is False:
@@ -177,7 +162,7 @@ def main():
     success = air_pollution_table(
         db_connection=conn_output,
         api_key=api_key,
-        cities_list=my_list
+        cities_list=user_list
     )
 
     if success is False:
