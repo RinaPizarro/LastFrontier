@@ -15,4 +15,4 @@ LastFrontier is a data-ingestion program that retrieves data from OpenWeather an
 
 ## Files Explained
 ### alaskan_cities.txt
-This file contains the list of all cities expected to be used when retrieving weather data from the API. 
+This file contains the list of all cities expected to be used when retrieving weather data from the API. alaskan_cities_text.py allows users to add cities to the file, but does not allow users to remove cities. This would need to be done manually until implentation.
