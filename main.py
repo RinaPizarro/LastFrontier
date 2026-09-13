@@ -3,7 +3,7 @@ import sql_server as s
 import alaskan_cities_text as a
 from validation import exit_input
 from colorama import Fore, Back, Style, init
-from customizable import delay_print
+from customizable import delay_print, loading_city_animation
 
 def main():
 
@@ -70,12 +70,12 @@ def main():
             print(conn_output)
             return
 
-    user_table = delay_print(exit_input(
+    user_table = exit_input(
         "\nLet's see if our table exists. What is your table name? "
-    ))
+    )
+
     user_table = user_table.lower()
 
-    # Use the weather data we already retrieved when checking the API key.
     weather_headers = w.output_headers_list(
         output=output
     )
@@ -109,13 +109,11 @@ def main():
             print(message)
             return
 
-        print(message)
+        print(Fore.LIGHTGREEN_EX, end ="")
+        print(message + Style.RESET_ALL)
 
-    # Insert weather information for each city.
     for city in my_list:
-        print(f"\nGetting weather for {city}...")
 
-        # The first city's weather was already retrieved above.
         if city == my_list[0]:
             weather_data = weather_dict_output
 
@@ -153,23 +151,25 @@ def main():
                 print(weather_data)
                 return
 
-        success, message = s.insert_data(
-            db_connection=conn_output,
-            table_name=user_table,
-            data_dict=weather_data
+        success, message = loading_city_animation(
+            city,
+            lambda: s.insert_data(
+                db_connection=conn_output,
+                table_name=user_table,
+                data_dict=weather_data
+            )
         )
 
         if success is True:
             print(Fore.LIGHTGREEN_EX, end="")
-            print(f"{city} has been inserted into the {user_table} table." + Style.RESET_ALL)
+            print(f"{city} has been inserted into the {user_table} table.\n" + Style.RESET_ALL)
         else:
             print(Fore.LIGHTRED_EX, end="")
-            print(f"{city} was not inserted into the {user_table} table." + Style.RESET_ALL)
+            print(f"{city} was not inserted into the {user_table} table.\n" + Style.RESET_ALL)
             print(message)
             return
 
     print("\nThank you for interacting with LastFrontier. Goodbye!")
-
 
 if __name__ == "__main__":
     main()

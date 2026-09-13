@@ -92,7 +92,7 @@ def create_table(db_connection, table_name, columns_dict):
         db_connection.commit()
         cursor.close()
 
-        return True, "Table created."
+        return True, "A new table has been created."
 
     except Exception as error:
         db_connection.rollback()

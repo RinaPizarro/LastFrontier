@@ -39,7 +39,7 @@ def line_count():
 
 # Print lines in file
 def print_lines(lines):
-    delay_print("\nThis is the list of current cities:")
+    delay_print("\nThis is the list of current cities:\n")
     for line in lines:
         print(line)
 
