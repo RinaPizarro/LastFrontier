@@ -4,7 +4,6 @@ from colorama import Fore, Style
 
 required_tables = ["weather", "air_pollution"]
 
-
 def connection(username, password, host):
     try:
         connection = psycopg2.connect(

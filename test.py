@@ -8,4 +8,4 @@ lat = 61.2163
 lon = -149.8949
 
 print(ss.all_alaskan_cities())
-print(ss.all_alaskan_coord(city_list=ss.all_alaskan_cities()))
+listing = (ss.all_alaskan_coord(city_list=ss.all_alaskan_cities()))
