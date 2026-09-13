@@ -220,3 +220,36 @@ def create_or_insert(db_connection, table_name, data_dict):
         return False, message
 
     return True, table_message
+
+#TODO query existing rows, insert if count(*) is > 0
+def find_existing_row(db_connection, table_name, rows_dict):
+    try:
+        cursor = db_connection.cursor()
+        del rows_dict["time_utc"]
+        
+        where_clause = sql.SQL(" AND ").join(
+            sql.Composed([
+                sql.Identifier(col),  # column name
+                sql.SQL(" = "),
+                sql.Placeholder()     # placeholder for value
+            ])
+            for col in rows_dict.keys()
+        )
+
+        query = sql.SQL("SELECT * FROM {table} WHERE {conditions}").format(
+            table=sql.Identifier(table_name),
+            conditions=where_clause
+        )
+
+        values = tuple(rows_dict.values())
+
+        # Execute with parameters
+        cursor.execute(query, values)
+
+        # Fetch results
+        rows = cursor.fetchall()
+        return len(rows)
+    
+    except Exception as error:
+        db_connection.rollback()
+        return False, str(error)

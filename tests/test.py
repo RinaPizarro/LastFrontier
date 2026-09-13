@@ -1,12 +1,6 @@
 # This .py file acts as a test file during production
 
-import src.open_weather_api as w
 from datetime import datetime
-import src.cities_table as ss
-import src.column_functions as func
+import psycopg2
+from psycopg2 import sql
 
-lat = 61.2163
-lon = -149.8949
-
-print(ss.all_alaskan_cities())
-print(ss.all_alaskan_coord(ss.all_alaskan_cities()[0]))
