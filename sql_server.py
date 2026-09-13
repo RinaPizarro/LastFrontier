@@ -1,10 +1,10 @@
-# Module for handling connection to PostgreSQL Server and creation/ insertion of tables
-
 import psycopg2
-from psycopg2 import sql, OperationalError
-from open_weather_api import required_tables
+from psycopg2 import sql
+from colorama import Fore, Style
 
-# Connect to PostgreSQL Database
+required_tables = ["weather", "air_pollution"]
+
+
 def connection(username, password, host):
     try:
         connection = psycopg2.connect(
@@ -17,11 +17,11 @@ def connection(username, password, host):
 
         return True, connection
 
-    except psycopg2.OperationalError as e:
-        return False, f"Connection failed: {e}"
+    except psycopg2.OperationalError as error:
+        return False, f"Connection failed: {error}"
 
-# Check if table already exists in DB
-def find_table(db_connection, table_name, schema='public'):
+
+def find_table(db_connection, table_name, schema="public"):
     try:
         cursor = db_connection.cursor()
 
@@ -34,20 +34,24 @@ def find_table(db_connection, table_name, schema='public'):
             );
         """)
 
-        cursor.execute(query, (schema, table_name))
+        cursor.execute(
+            query,
+            (schema, table_name)
+        )
+
         exists = cursor.fetchone()[0]
         cursor.close()
 
         return exists
 
-    except Exception as e:
-        print(f"Error checking table existence: {e}")
+    except Exception as error:
+        print(f"Error checking table existence: {error}")
         return False
 
-# Provides list of pre-detemined list of data types for JSON output 
+
 def postgres_type(column_name, value):
 
-    if column_name == "Time":
+    if column_name.lower() == "time_utc":
         return "TIMESTAMPTZ"
 
     elif isinstance(value, bool):
@@ -65,20 +69,21 @@ def postgres_type(column_name, value):
     else:
         return "TEXT"
 
-# Create new table in DB
-def create_table(db_connection, table_name, columns_dict):
+
+def create_table(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()
         columns = []
 
-        for col_name, value in columns_dict.items():
+        for column_name, value in data_dict.items():
+
             data_type = postgres_type(
-                col_name,
+                column_name,
                 value
             )
 
             column = sql.SQL("{} {}").format(
-                sql.Identifier(col_name),
+                sql.Identifier(column_name),
                 sql.SQL(data_type)
             )
 
@@ -95,13 +100,13 @@ def create_table(db_connection, table_name, columns_dict):
         db_connection.commit()
         cursor.close()
 
-        return True, "A new table has been created."
+        return True, f"Table '{table_name}' has been created."
 
     except Exception as error:
         db_connection.rollback()
         return False, str(error)
 
-# inserts weather data
+
 def insert_data(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()
@@ -112,7 +117,8 @@ def insert_data(db_connection, table_name, data_dict):
                 SELECT EXISTS (
                     SELECT 1
                     FROM information_schema.columns
-                    WHERE table_name = %s
+                    WHERE table_schema = 'public'
+                    AND table_name = %s
                     AND column_name = %s
                 );
             """
@@ -126,16 +132,10 @@ def insert_data(db_connection, table_name, data_dict):
 
             if not column_exists:
 
-                if isinstance(value, bool):
-                    data_type = "BOOLEAN"
-                elif isinstance(value, int):
-                    data_type = "INTEGER"
-                elif isinstance(value, float):
-                    data_type = "DOUBLE PRECISION"
-                elif column == "Time":
-                    data_type = "TIMESTAMPTZ"
-                else:
-                    data_type = "TEXT"
+                data_type = postgres_type(
+                    column,
+                    value
+                )
 
                 alter_table = sql.SQL(
                     "ALTER TABLE {} ADD COLUMN {} {}"
@@ -168,15 +168,42 @@ def insert_data(db_connection, table_name, data_dict):
         )
 
         cursor.execute(query, values)
-
         db_connection.commit()
         cursor.close()
 
-        return True, "Data inserted."
+        return True, f"Data inserted into '{table_name}'."
 
     except Exception as error:
         db_connection.rollback()
         return False, str(error)
 
-def setup_required_tables():
-    pass
+
+def create_or_insert(db_connection, table_name, data_dict):
+
+    table_exists = find_table(
+        db_connection=db_connection,
+        table_name=table_name
+    )
+
+    if table_exists is False:
+
+        status, message = create_table(
+            db_connection=db_connection,
+            table_name=table_name,
+            data_dict=data_dict
+        )
+
+        if status is False:
+            return False, message
+
+        print(
+            Fore.LIGHTGREEN_EX
+            + message
+            + Style.RESET_ALL
+        )
+
+    return insert_data(
+        db_connection=db_connection,
+        table_name=table_name,
+        data_dict=data_dict
+    )
