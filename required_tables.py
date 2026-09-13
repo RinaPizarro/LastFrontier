@@ -136,7 +136,6 @@ def weather_table(db_connection, api_key):
 
     return True
 
-
 # This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
 def air_pollution_table(db_connection, api_key):
     cities_list = all_cities_list()
@@ -246,4 +245,4 @@ def air_pollution_table(db_connection, api_key):
         + Style.RESET_ALL
     )
 
-    return Tru
+    return True
