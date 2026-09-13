@@ -1,9 +1,9 @@
 # This .py file acts as a test file during production
 
-import open_weather_api as w
+import src.open_weather_api as w
 from datetime import datetime
-import alaskan_cities_table as ss
-import list_functions as func
+import src.alaskan_cities_table as ss
+import src.list_functions as func
 
 lat = 61.2163
 lon = -149.8949

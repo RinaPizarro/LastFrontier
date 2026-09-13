@@ -9,6 +9,7 @@ import sql_server as s
 def alaskan_cities():
     cities = City.get_cities_of_state('US', 'AK')
     cities_list = []
+
     for city in cities:
         cities_list.append(city.name)
 
@@ -28,11 +29,14 @@ def alaskan_city_coord(
 
         location = safe_client(city_state_name, timeout=10)
 
+        if location is None:
+            return None
+
         city_dict = {
             "name": city_name,
             "coord": {
-                "lon": location.longitude,
-                "lat": location.latitude
+                "lat": location.latitude,
+                "lon": location.longitude
             }
         }
 
@@ -53,6 +57,10 @@ def alaskan_city_coord(
 def alaskan_cities_list(my_list):
     headers_list = func.output_headers_list(output=my_list)
     values_list = func.output_values_list(output=my_list)
-    headers_values_list = func.output_to_dict(headers_output=headers_list,values_output=values_list)
+
+    headers_values_list = func.output_to_dict(
+        headers_output=headers_list,
+        values_output=values_list
+    )
 
     return headers_values_list

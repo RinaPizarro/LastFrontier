@@ -65,16 +65,19 @@ def output_values_list(output):
         universal_time()
     )
 
-    for value in output.values():
+    for key, value in output.items():
 
         if isinstance(value, dict):
 
-            for nested_value in value.values():
+            for nested_key, nested_value in value.items():
 
                 if isinstance(nested_value, dict):
-                    column_values.extend(
-                        nested_value.values()
-                    )
+
+                    for sub_key, sub_value in nested_value.items():
+                        column_values.append(
+                            sub_value
+                        )
+
                 else:
                     column_values.append(
                         nested_value
@@ -86,12 +89,15 @@ def output_values_list(output):
 
                 if isinstance(item, dict):
 
-                    for nested_value in item.values():
+                    for nested_key, nested_value in item.items():
 
                         if isinstance(nested_value, dict):
-                            column_values.extend(
-                                nested_value.values()
-                            )
+
+                            for sub_key, sub_value in nested_value.items():
+                                column_values.append(
+                                    sub_value
+                                )
+
                         else:
                             column_values.append(
                                 nested_value

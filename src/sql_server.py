@@ -105,11 +105,19 @@ def create_table(db_connection, table_name, data_dict):
         db_connection.rollback()
         return False, str(error)
 
+
 def insert_data(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()
 
         for column, value in data_dict.items():
+
+            if isinstance(value, (dict, list, tuple, set)):
+                return (
+                    False,
+                    f"Column '{column}' contains unsupported "
+                    f"data type: {type(value).__name__}."
+                )
 
             check_column = """
                 SELECT EXISTS (
