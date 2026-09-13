@@ -3,13 +3,17 @@
 import open_weather_api as w
 from validation import exit_input, valid_input
 from customizable import delay_print
+from pathlib import Path
+
+# Relative file path
+FILE_PATH = Path(__file__).resolve().parent.parent / "data" / "user_alaskan_cities.txt"
 
 # Remove whitespaces, remove empty lines in user_data\user_alaskan_cities.txt
 def clean_file():
-    with open("data/user_alaskan_cities.txt", "r") as f:
+    with open(FILE_PATH, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    with open("data/user_alaskan_cities.txt", "w") as f:
+    with open(FILE_PATH, "w") as f:
         for line in lines:
             f.write(line + "\n")
 
@@ -27,7 +31,7 @@ def remove_duplicates(lines):
             seen.add(key)
             unique_cities.append(city.title())
 
-    with open("data/user_alaskan_cities.txt", "w") as f:
+    with open(FILE_PATH, "w") as f:
         for city in unique_cities:
             f.write(city + "\n")
 
@@ -35,7 +39,7 @@ def remove_duplicates(lines):
 
 # Count number of lines in file
 def line_count():
-    with open("data/user_alaskan_cities.txt") as f:
+    with open(FILE_PATH) as f:
         return sum(1 for _ in f)
 
 # Print lines in file
@@ -50,7 +54,7 @@ def remove_invalid_cities(lines):
         if not w.city_in_alaska(line):
             lines.remove(line)
 
-    with open("data/user_alaskan_cities.txt", "w") as f:
+    with open(FILE_PATH, "w") as f:
         for line in lines:
             f.write(line + "\n")
 
@@ -62,7 +66,7 @@ def add_city():
         print("That city does not exist or is not located in Alaska.")
         user_city =exit_input("Please try another city: ").strip()
 
-    with open("data/user_alaskan_cities.txt", "a") as file:
+    with open(FILE_PATH, "a") as file:
         file.write(user_city + "\n")
 
 # Returns list of all cities we want to retrieve weather APIs for
@@ -79,7 +83,7 @@ def all_cities_list():
     print_lines(lines)
 
     while True:
-        confirm = valid_input("Would you like to add a city (y/n): ")
+        confirm = valid_input("\nWould you like to add a city (y/n): ")
 
         if confirm == "y":
             add_city()
