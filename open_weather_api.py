@@ -1,3 +1,5 @@
+# Module for connecting to Open Weather API.
+
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -5,7 +7,7 @@ from country_state_city import Country, State, City
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-
+# Check if city is in Alaska
 def city_in_alaska(city_name):
     cities = City.get_cities_of_state('US', 'AK')
 
@@ -15,6 +17,7 @@ def city_in_alaska(city_name):
 
     return None
 
+# Get latitude and longitude of Alaskan city
 def lat_and_long(
         city_name,
         state_name="Alaska"): 
@@ -25,7 +28,7 @@ def lat_and_long(
 
     return str(location["lat"]), str(location["lon"])
 
-
+# Get current weather
 def current_weather_api(
         lat, 
         lon, 
