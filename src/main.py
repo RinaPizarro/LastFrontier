@@ -55,6 +55,7 @@ def main():
 
         break
 
+    # CONNECT TO POSTGRESQL DATABASE
     delay_print("\nLet's connect to the LastFrontier database and import our weather information.")
 
     while True:
@@ -94,6 +95,7 @@ def main():
             + Style.RESET_ALL
         )
 
+    #TABLE 1: CITIES_TABLE
     success = cities_table(
         db_connection=conn_output,
         cities_list=head_list
@@ -107,6 +109,7 @@ def main():
         )
         return
 
+    #TABLE 2: WEATHER_TABLE
     success = weather_table(
         db_connection=conn_output,
         api_key=api_key,
@@ -121,6 +124,7 @@ def main():
         )
         return
 
+    # TABLE 3: AIR POLLUTION TABLE
     success = air_pollution_table(
         db_connection=conn_output,
         api_key=api_key,

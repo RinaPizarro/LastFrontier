@@ -3,7 +3,8 @@ from country_state_city import City
 from geopy.geocoders import Nominatim
 from zoneinfo import ZoneInfo
 
-def city_in_alaska(city_name):
+
+def verify_city(city_name):
     cities = City.get_cities_of_state('US', 'AK')
 
     for city in cities:
