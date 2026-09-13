@@ -39,6 +39,12 @@ def alaska_time():
 
     return alaska_time_format
 
+def alaska_time_unix():
+    alaska_time = datetime.now(ZoneInfo("America/Anchorage"))
+    unix_timestamp = int(alaska_time.timestamp())
+
+    return unix_timestamp
+
 # Get current weather
 def current_weather_api(
         lat, 
@@ -72,12 +78,20 @@ def road_risk_api(
         lat, 
         lon, 
         api_key,
-        dt 
     ):
 
     url = "https://api.openweathermap.org/data/2.5/roadrisk"
+    dt = alaska_time_unix()
 
-
+    params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": api_key,
+            "dt": dt
+        }
+    
+    response = requests.get(url, params=params)
+    return response
 
 def output_headers_list(output):
     columns_headers = []
