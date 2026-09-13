@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import sql
 from colorama import Fore, Style
 
-required_tables = ["weather", "air_pollution"]
+required_tables = ["alaskan_cities", "weather", "air_pollution"]
 
 def connection(username, password, host):
     try:
@@ -104,7 +104,6 @@ def create_table(db_connection, table_name, data_dict):
     except Exception as error:
         db_connection.rollback()
         return False, str(error)
-
 
 def insert_data(db_connection, table_name, data_dict):
     try:

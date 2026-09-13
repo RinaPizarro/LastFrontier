@@ -11,63 +11,49 @@ def all_alaskan_cities():
     for city in cities:
         cities_list.append(city.name)
 
-    return cities_list
+    return cities_list[:5]
 
-#FIXME This needs to be a dictionary not a list
 def all_alaskan_coord(
-    city_list,
+    city_name,
     state_name="Alaska"
-):
+    ):
 
-    client = Nominatim(
-        user_agent="last_frontier"
-    )
+    client = Nominatim(user_agent="last_frontier")
 
-    safe_client = RateLimiter(
-        client.geocode,
-        min_delay_seconds=1
-    )
-
-    full_dict = {}
+    safe_client = RateLimiter(client.geocode, min_delay_seconds=1)
 
     try:
-        for city_name in city_list:
+        city_state_name = f"{city_name}, {state_name}"
 
-            try:
-                city_state_name = f"{city_name}, {state_name}"
+        location = safe_client(city_state_name, timeout=10)
 
-                location = safe_client(
-                    city_state_name,
-                    timeout=10,
-                )
+        city_dict = {
+            "name": city_name,
+            "coord": {
+                "lon": location.longitude,
+                "lat": location.latitude
+            }
+        }
 
-                city_dict = {
-                    "name": city_name,
-                    "coord": {
-                        "lon": location.longitude,
-                        "lat": location.latitude
-                    }
-                }
+        print(city_dict)
 
-                full_dict[city_name] = city_dict
+        return city_dict
 
-                print(full_dict)
+    except AttributeError:
+        # Coordinates do not exist
+        return None
 
-            except AttributeError:
-                # Skip city_name if coordinates do not exist
-                continue
-
-        return full_dict
-    
     except GeocoderRateLimited as e:
         print(f"Rate limited: {e}")
-        # Optionally wait and retry
+
         import time
         time.sleep(e.retry_after)
+
+        return None
 
 def alaskan_list(my_list):
     headers_list = func.output_headers_list(output=my_list)
     values_list = func.output_values_list(output=my_list)
     headers_values_list = func.output_to_dict(headers_output=headers_list,values_output=values_list)
 
-    return headers_list
+    return headers_values_list

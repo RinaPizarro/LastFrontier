@@ -3,9 +3,10 @@
 import open_weather_api as w
 from datetime import datetime
 import sql_cities_table as ss
+import list_functions as func
 
 lat = 61.2163
 lon = -149.8949
 
 print(ss.all_alaskan_cities())
-listing = (ss.all_alaskan_coord(city_list=ss.all_alaskan_cities()))
+print(ss.all_alaskan_coord(ss.all_alaskan_cities()[0]))
