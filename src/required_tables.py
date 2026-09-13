@@ -1,7 +1,7 @@
 from cities_table import alaskan_cities, alaskan_city_coord
 from user_cities import all_cities_list
 from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
-from sql_server import create_or_insert
+from sql_server import create_or_insert, find_existing_row
 from column_functions import output_headers_list, output_values_list, output_to_dict
 from colorama import Fore, Style, init
 
@@ -13,6 +13,7 @@ from colorama import Fore, Style, init
 # This table contains Alaskan cities name, latitude, and longtitude
 def cities_table(db_connection, cities_list):
     table_message_shown = False
+    table_name = "alaskan_cities"
 
     for city in cities_list:
 
@@ -44,26 +45,29 @@ def cities_table(db_connection, cities_list):
             print(city_data)
             continue
 
-        # Insert city data
-        success, message = create_or_insert(
-            db_connection=db_connection,
-            table_name="alaskan_cities",
-            data_dict=city_data
-        )
+        # Insert city data (if lat and lon have not changed)
+        if find_existing_row(db_connection=db_connection,table_name=table_name,rows_dict=city_data) > 0:
+            print(f'Latitude and Longtitude for {city} has not changed. Skipping...')
+        else:
+            success, message = create_or_insert(
+                db_connection=db_connection,
+                table_name=table_name,
+                data_dict=city_data
+            )
 
-        if success is False:
-            print(f"{city} was not inserted.")
-            print(message)
-            continue
+            if success is False:
+                print(f"{city} was not inserted.")
+                print(message)
+                continue
 
-        # Print table status only once
-        if table_message_shown is False:
+            # Print table status only once
+            if table_message_shown is False:
 
-            print(message)
+                print(message)
 
-            table_message_shown = True
+                table_message_shown = True
 
-        print(f"{city} imported successfully.")
+            print(f"{city} imported successfully.")
 
     print("alaskan_cities table has been processed.")
 

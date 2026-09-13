@@ -18,21 +18,41 @@ def alaskan_cities():
 def alaskan_city_coord(
     city_name,
     state_name="Alaska"
-    ):
+):
+    import time
+    from geopy.geocoders import Nominatim
+    from geopy.extra.rate_limiter import RateLimiter
+    from geopy.exc import GeocoderRateLimited
 
-    client = Nominatim(user_agent="last_frontier")
+    # Create the client/limiter only once
+    if not hasattr(alaskan_city_coord, "_safe_client"):
+        client = Nominatim(
+            user_agent="last_frontier"
+        )
 
-    safe_client = RateLimiter(client.geocode, min_delay_seconds=1)
+        alaskan_city_coord._safe_client = RateLimiter(
+            client.geocode,
+            min_delay_seconds=2,
+            max_retries=2,
+            error_wait_seconds=10,
+            swallow_exceptions=False
+        )
+
+    safe_client = alaskan_city_coord._safe_client
 
     try:
         city_state_name = f"{city_name}, {state_name}"
 
-        location = safe_client(city_state_name, timeout=10)
+        location = safe_client(
+            city_state_name,
+            timeout=10
+        )
 
         if location is None:
+            print(f"Unable to find coordinates for {city_name}.")
             return None
 
-        city_dict = {
+        return {
             "name": city_name,
             "coord": {
                 "lat": location.latitude,
@@ -40,17 +60,14 @@ def alaskan_city_coord(
             }
         }
 
-        return city_dict
-
-    except AttributeError:
-        # Coordinates do not exist
-        return None
-
     except GeocoderRateLimited as e:
         print(f"Rate limited: {e}")
 
-        import time
-        time.sleep(e.retry_after)
+        retry_after = getattr(e, "retry_after", None)
+
+        if retry_after:
+            print(f"Waiting {retry_after} seconds...")
+            time.sleep(retry_after)
 
         return None
 

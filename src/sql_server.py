@@ -1,8 +1,7 @@
 import psycopg2
 from psycopg2 import sql
 
-required_tables = ["alaskan_cities", "weather", "air_pollution"]
-
+# Connect to PostgreSQL Database
 def connection(username, password, host):
     try:
         connection = psycopg2.connect(
@@ -18,7 +17,7 @@ def connection(username, password, host):
     except psycopg2.OperationalError as error:
         return False, f"Connection failed: {error}"
 
-
+# Find table in database
 def find_table(db_connection, table_name, schema="public"):
     try:
         cursor = db_connection.cursor()
@@ -46,7 +45,7 @@ def find_table(db_connection, table_name, schema="public"):
         print(f"Error checking table existence: {error}")
         return False
 
-
+# Determine column data types
 def postgres_type(column_name, value):
 
     if column_name.lower() == "time_utc":
@@ -67,7 +66,7 @@ def postgres_type(column_name, value):
     else:
         return "TEXT"
 
-
+# Create table in database
 def create_table(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()
@@ -104,7 +103,7 @@ def create_table(db_connection, table_name, data_dict):
         db_connection.rollback()
         return False, str(error)
 
-
+# insert data to existing table in database
 def insert_data(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()
@@ -184,7 +183,6 @@ def insert_data(db_connection, table_name, data_dict):
 
 
 def create_or_insert(db_connection, table_name, data_dict):
-
     table_exists = find_table(
         db_connection=db_connection,
         table_name=table_name
@@ -221,7 +219,7 @@ def create_or_insert(db_connection, table_name, data_dict):
 
     return True, table_message
 
-#TODO query existing rows, insert if count(*) is > 0
+# Find existing row in table
 def find_existing_row(db_connection, table_name, rows_dict):
     try:
         cursor = db_connection.cursor()
