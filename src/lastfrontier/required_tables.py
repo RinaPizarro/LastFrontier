@@ -65,8 +65,11 @@ def required_table_create(table_name):
             return False, message
         
     if table_type(table_name) == "Fact":
-        cities_list = final_list()
-        return cities_list
+        cities_list = final_list(limit=1)
+        city = cities_list[0]
+        lat, long = lat_and_long(city_name=city)
+
+        return city
 
         for city in cities_table:
             pass
