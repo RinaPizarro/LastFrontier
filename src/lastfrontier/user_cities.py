@@ -98,3 +98,13 @@ def all_cities_list():
             break
 
     return lines
+
+def final_list(limit: int = None):
+    lines = clean_file()
+    remove_invalid_cities(lines)
+    lines = remove_duplicates(lines)
+
+    if limit == None:
+        return lines
+    else:
+        return lines[:limit]
