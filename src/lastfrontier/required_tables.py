@@ -1,120 +1,219 @@
-from lastfrontier.cities_table import all_alaskan_cities, alaskan_city_coord
-from lastfrontier.user_cities import all_cities_list, final_list
+from lastfrontier.cities_table import (
+    all_alaskan_cities,
+    alaskan_city_coord
+)
+
+from lastfrontier.user_cities import (
+    all_cities_list,
+    final_list
+)
+
 from lastfrontier.open_weather_api import (
     current_weather_api,
     lat_and_long,
-    air_pollution_api,
+    air_pollution_api
 )
+
 from lastfrontier.sql_server import (
-    create_or_insert,
-    find_existing_row,
     connection,
     create_table,
-    insert_data
+    insert_data,
+    find_existing_row
 )
+
 from lastfrontier.column_functions import (
     output_headers_list,
     output_values_list,
-    output_to_dict,
+    output_to_dict
 )
-from colorama import Fore, Style, init
-from dotenv import load_dotenv
+
+from colorama import Fore, Style
 from pathlib import Path
 
 import os
 import json
 
-# REQUIRED TABLES:
-# alaskan_cities
-# weather
-# air_pollution
+TABLES_FILE = (Path(__file__).resolve().parent / "data"/ "tables.json")
 
-# This table contains Alaskan cities name, latitude, and longtitude
+API_FUNCTIONS = {
+    "current_weather_api": current_weather_api,
+    "air_pollution_api": air_pollution_api
+}
 
-#TODO SEPERATE MASTER AND FACT TABLES
+# TABLE CONFIGURATION
 
-# Determine table type 
-def table_type(table_name):
-    FILE_PATH = Path(__file__).resolve().parent / "data" / "tables.json"
+def load_table_config():
+    with open(TABLES_FILE, "r") as file:
+        return json.load(file)
 
-    with open(FILE_PATH,'r') as file:
-        output = json.load(file)
-        table_value = output[table_name]
-        return table_value["type"]
 
-def table_api_func(table_name):
-    FILE_PATH = Path(__file__).resolve().parent / "data" / "tables.json"
+def get_table_config(table_name):
+    TABLE_CONFIG = load_table_config()
 
-    with open(FILE_PATH,'r') as file:
-        output = json.load(file)
-        table_value = output[table_name]
-        return table_value["api_func"]
+    if table_name not in TABLE_CONFIG:
+        raise ValueError(
+            f"Unknown table: {table_name}"
+        )
 
+    return TABLE_CONFIG[table_name]
+
+# Return the API function associated with a Fact table.
+def get_api_function(table_name):
+    config = get_table_config(table_name)
+
+    if config.get("type") != "Fact":
+        return False, (
+            f"Table '{table_name}' is not a Fact table."
+        )
+
+    api_name = config.get("api_func")
+
+    if not api_name:
+        return False, f"No API function is defined for {table_name}'."
+
+    api_function = API_FUNCTIONS.get(api_name)
+
+    if api_function is None:
+        return False, f"API function '{api_name}' is not registered."
+
+    return True, api_function
+
+# CREATE TABLE
 def required_table_create(table_name):
     db_status, db_connection = connection()
-    api_key = os.getenv("OPEN_WEATHER_API_KEY")
-    table_message_shown = False
 
-    if table_type(table_name) == "Master":
+    if not db_status:
+        return False, db_connection
+
+    config = get_table_config(table_name)
+
+    table_type = config.get("type")
+
+    # MASTER TABLE
+    if table_type == "Master":
+
         cities_list = all_alaskan_cities(count=1)
-        city_dict = alaskan_city_coord(city_name=cities_list[0])
-        headers_list = output_headers_list(output=city_dict)
 
-        status, message = create_table(db_connection=db_connection, table_name=table_name,column_names=headers_list)
-        if status is False:
-            return False, message
-        
-    if table_type(table_name) == "Fact":
-        cities_list = final_list(limit=1)
+        if not cities_list:
+            return False, (
+                "No Alaskan cities were found."
+            )
+
         city = cities_list[0]
-        lat, long = lat_and_long(city_name=city)
 
-        return city
+        city_output = alaskan_city_coord(
+            city_name=city
+        )
 
-        for city in cities_table:
-            pass
-        
+        if city_output is None:
+            return False, (
+                f"Unable to find coordinates for {city}."
+            )
+
+        headers_list = output_headers_list(
+            output=city_output
+        )
+
+    # FACT TABLE
+    elif table_type == "Fact":
+
+        api_key = os.getenv(
+            "OPEN_WEATHER_API_KEY"
+        )
+
+        if not api_key:
+            return False, (
+                "OPEN_WEATHER_API_KEY is not set."
+            )
+
+        cities_list = final_list(limit=1)
+
+        if not cities_list:
+            return False, (
+                "No cities were found."
+            )
+
+        city = cities_list[0]
+
+        lat, lon = lat_and_long(
+            city_name=city
+        )
+
+        if lat is None or lon is None:
+            return False, (
+                f"Unable to find coordinates for {city}."
+            )
+
+        success, api_function = get_api_function(
+            table_name
+        )
+
+        if not success:
+            return False, api_function
+
+        status, api_output = api_function(
+            lat=lat,
+            lon=lon,
+            api_key=api_key
+        )
+
+        if not status:
+            return False, api_output
+
+        headers_list = output_headers_list(
+            output=api_output
+        )
+
+    # INVALID TABLE TYPE
     else:
-        return # stop the program 
 
-print(required_table_create("weather"))
+        return False, (
+            f"Unsupported table type '{table_type}' "
+            f"for table '{table_name}'."
+        )
+
+    # CREATE DATABASE TABLE
+    status, message = create_table(
+        db_connection=db_connection,
+        table_name=table_name,
+        column_names=headers_list
+    )
+
+    return status, message
 
 
-def required_table_insert(table_name):
-    api_key = os.getenv("OPEN_WEATHER_API_KEY")
-    db_status, db_connection = connection()
-    table_message_shown = False
+# INSERT MASTER TABLE
 
-    if table_type(table_name) == "Master":
-        cities_list = all_alaskan_cities()
-        
-    if table_type(table_name) == "Fact":
-        cities_list = all_cities_list()
+def insert_master_table(
+    table_name,
+    db_connection
+):
 
-
-        
-    else:
-        return # stop the program 
-
-def cities_table():
-
-    db_status, db_connection = connection()
     cities_list = all_alaskan_cities()
+
     table_message_shown = False
-    table_name = "alaskan_cities"
 
     for city in cities_list:
 
-        print(f"\nGetting data for {city}...")
+        print(
+            f"\nGetting data for {city}..."
+        )
 
-        # Get city coordinates
-        city_output = alaskan_city_coord(city)
+        # GET CITY DATA
+        city_output = alaskan_city_coord(
+            city_name=city
+        )
 
         if city_output is None:
-            print(f"Unable to find coordinates for {city}.")
+
+            print(
+                f"Unable to find coordinates for {city}."
+            )
+
             continue
 
-        # Convert API output
+        # CONVERT API OUTPUT
+
         city_headers = output_headers_list(
             output=city_output
         )
@@ -128,124 +227,199 @@ def cities_table():
             values_output=city_values
         )
 
-        if success is False:
-            print(f"Unable to process city data for {city}.")
+        if not success:
+
+            print(
+                f"Unable to process city data "
+                f"for {city}."
+            )
+
             print(city_data)
+
             continue
 
-        # Insert city data (if lat and lon have not changed)
-        status, count = find_existing_row(db_connection=db_connection,table_name=table_name,rows_dict=city_data)
+        # CHECK EXISTING ROW
+        status, count = find_existing_row(
+            db_connection=db_connection,
+            table_name=table_name,
+            rows_dict=city_data
+        )
+
         if int(count) > 0:
-            print(f'Latitude and Longtitude for {city} has not changed. Skipping...')
-        else:
-            success, message = create_or_insert(
-                db_connection=db_connection,
-                table_name=table_name,
-                data_dict=city_data
+
+            print(
+                f"Latitude and Longitude for {city} "
+                "has not changed. Skipping..."
             )
 
-            if success is False:
-                print(f"{city} was not inserted.")
-                print(message)
-                continue
+            continue
 
-            # Print table status only once
-            if table_message_shown is False:
+        # INSERT CITY
+        success, message = insert_data(
+            db_connection=db_connection,
+            table_name=table_name,
+            data_dict=city_data
+        )
 
-                print(message)
+        if not success:
 
-                table_message_shown = True
+            print(
+                f"{city} was not inserted."
+            )
 
-            print(f"{city} imported successfully.")
+            print(message)
 
-    print("alaskan_cities table has been processed.")
+            continue
+
+        # PRINT TABLE MESSAGE ONCE
+        if not table_message_shown:
+
+            print(message)
+
+            table_message_shown = True
+
+        print(
+            f"{city} imported successfully."
+        )
+
+    print(
+        f"{table_name} table has been processed."
+    )
 
     return True
 
-# This table contains weather information of all user selected Alaskan cities from alaskan_cities.txt
-def weather_table():
 
-    db_status, db_connection = connection()
-    api_key = os.getenv("OPEN_WEATHER_API_KEY")
+# INSERT FACT TABLE
+def insert_fact_table(
+    table_name,
+    db_connection
+):
+    """
+    Insert data into a Fact table using the API
+    specified in tables.json.
+    """
+
+    api_key = os.getenv(
+        "OPEN_WEATHER_API_KEY"
+    )
+
+    if not api_key:
+
+        print(
+            Fore.LIGHTRED_EX
+            + "OPEN_WEATHER_API_KEY is not set."
+            + Style.RESET_ALL
+        )
+
+        return False
+
+    # GET API FUNCTION
+    success, api_function = get_api_function(
+        table_name
+    )
+
+    if not success:
+
+        print(
+            Fore.LIGHTRED_EX
+            + api_function
+            + Style.RESET_ALL
+        )
+
+        return False
+
+    # GET CITIES
     cities_list = all_cities_list()
+
     table_message_shown = False
 
     for city in cities_list:
 
-        print(f"\nGetting data for {city}...")
+        print(
+            f"\nGetting data for {city}..."
+        )
 
-        # Get city coordinates
+        # GET COORDINATES
         lat, lon = lat_and_long(
             city_name=city
         )
 
         if lat is None or lon is None:
+
             print(
+                Fore.LIGHTRED_EX
                 + f"Unable to find coordinates for {city}."
                 + Style.RESET_ALL
             )
+
             continue
 
-        # Get weather data
-        status, weather_output = current_weather_api(
+        # CALL API
+        status, api_output = api_function(
             lat=lat,
             lon=lon,
             api_key=api_key
         )
 
-        if status is False:
+        if not status:
+
             print(
                 Fore.LIGHTRED_EX
-                + f"Weather API key failed for {city}."
+                + f"Unable to retrieve data for {city}."
                 + Style.RESET_ALL
             )
-            return False
 
-        elif status is None:
-            print(weather_output)
-            return False
+            print(api_output)
 
-        # Convert API output
-        weather_headers = output_headers_list(
-            output=weather_output
-        )
-
-        weather_values = output_values_list(
-            output=weather_output
-        )
-
-        status, weather_data = output_to_dict(
-            headers_output=weather_headers,
-            values_output=weather_values
-        )
-
-        if status is False:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Unable to process weather data for {city}."
-                + Style.RESET_ALL
-            )
-            print(weather_data)
             continue
 
-        # Insert weather data
-        success, message = create_or_insert(
+        # CONVERT API OUTPUT
+        headers = output_headers_list(
+            output=api_output
+        )
+
+        values = output_values_list(
+            output=api_output
+        )
+
+        success, data = output_to_dict(
+            headers_output=headers,
+            values_output=values
+        )
+
+        if not success:
+
+            print(
+                Fore.LIGHTRED_EX
+                + f"Unable to process data for {city}."
+                + Style.RESET_ALL
+            )
+
+            print(data)
+
+            continue
+
+        # INSERT FACT DATA
+        success, message = insert_data(
             db_connection=db_connection,
-            table_name="weather",
-            data_dict=weather_data
+            table_name=table_name,
+            data_dict=data
         )
 
-        if success is False:
+        if not success:
+
             print(
                 Fore.LIGHTRED_EX
-                + f"{city} weather was not inserted."
+                + f"{city} was not inserted."
                 + Style.RESET_ALL
             )
+
             print(message)
+
             continue
 
-        # Print table status only once
-        if table_message_shown is False:
+        # PRINT TABLE MESSAGE ONCE
+        if not table_message_shown:
 
             print(
                 Fore.LIGHTYELLOW_EX
@@ -257,118 +431,56 @@ def weather_table():
 
         print(
             Fore.LIGHTGREEN_EX
-            + f"{city} weather imported successfully."
+            + f"{city} imported successfully."
             + Style.RESET_ALL
         )
 
+    print(
+        f"{table_name} table has been processed."
+    )
+
     return True
 
-# This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
-def air_pollution_table():
+# REQUIRED TABLE INSERT
+def required_table_insert(table_name):
+    """
+    Insert data into a Master or Fact table based
+    on the configuration in tables.json.
+    """
 
     db_status, db_connection = connection()
-    cities_list = all_cities_list()
-    api_key = os.getenv("OPEN_WEATHER_API_KEY")
-    table_message_shown = False
 
-    for city in cities_list:
+    if not db_status:
+        return False
 
-        print(
-            Fore.LIGHTBLUE_EX,
-            end=""
+    config = get_table_config(table_name)
+
+    table_type = config.get("type")
+
+    # MASTER
+    if table_type == "Master":
+
+        return insert_master_table(
+            table_name=table_name,
+            db_connection=db_connection
         )
 
+    # FACT
+    elif table_type == "Fact":
+
+        return insert_fact_table(
+            table_name=table_name,
+            db_connection=db_connection
+        )
+
+    # INVALID TYPE
+    else:
+
         print(
-            f"\nGetting air pollution data for {city}..."
+            Fore.LIGHTRED_EX
+            + f"Unsupported table type '{table_type}' "
+            f"for table '{table_name}'."
             + Style.RESET_ALL
         )
 
-        # Get city coordinates
-        lat, lon = lat_and_long(
-            city_name=city
-        )
-
-        if lat is None or lon is None:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Unable to find coordinates for {city}."
-                + Style.RESET_ALL
-            )
-            continue
-
-        # Get air pollution data
-        status, pollution_output = air_pollution_api(
-            lat=lat,
-            lon=lon,
-            api_key=api_key
-        )
-
-        if status is False:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Air pollution API key failed for {city}."
-                + Style.RESET_ALL
-            )
-            return False
-
-        elif status is None:
-            print(pollution_output)
-            return False
-
-        # Convert API output
-        pollution_headers = output_headers_list(
-            output=pollution_output
-        )
-
-        pollution_values = output_values_list(
-            output=pollution_output
-        )
-
-        status, pollution_data = output_to_dict(
-            headers_output=pollution_headers,
-            values_output=pollution_values
-        )
-
-        if status is False:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Unable to process air pollution data for {city}."
-                + Style.RESET_ALL
-            )
-            print(pollution_data)
-            continue
-
-        # Insert air pollution data
-        success, message = create_or_insert(
-            db_connection=db_connection,
-            table_name="air_pollution",
-            data_dict=pollution_data
-        )
-
-        if success is False:
-            print(
-                Fore.LIGHTRED_EX
-                + f"{city} air pollution was not inserted."
-                + Style.RESET_ALL
-            )
-            print(message)
-            continue
-
-        # Print table status only once
-        if table_message_shown is False:
-
-            print(
-                Fore.LIGHTYELLOW_EX
-                + message
-                + Style.RESET_ALL
-            )
-
-            table_message_shown = True
-
-        print(
-            Fore.LIGHTGREEN_EX
-            + f"{city} air pollution imported successfully."
-            + Style.RESET_ALL
-        )
-
-    return True
+        return False

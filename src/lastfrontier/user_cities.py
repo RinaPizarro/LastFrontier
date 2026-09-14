@@ -60,25 +60,23 @@ def remove_invalid_cities(lines):
             f.write(line + "\n")
 
 # Add city to file
-def add_city():
-    user_city = exit_input("Enter a city in Alaska: ").strip()
-
-    while verify_city(user_city) is None:
-        print("That city does not exist or is not located in Alaska.")
-        user_city =exit_input("Please try another city: ").strip()
-
-    with open(FILE_PATH, "a") as file:
-        file.write(user_city + "\n")
-
-# Returns list of all cities we want to retrieve weather APIs for
-def all_cities_list():
+def update_list():
     lines = clean_file()
-    remove_invalid_cities(lines)
-    lines = remove_duplicates(lines)
 
     if line_count() == 0:
         print("There are no cities listed. We need to have at least one city in our list.")
-        add_city()
+
+        while True:
+            user_city = exit_input("Enter a city in Alaska: ").strip()
+
+            if verify_city(user_city) is not None:
+                break
+
+            print("That city does not exist or is not located in Alaska.")
+
+        with open(FILE_PATH, "a") as file:
+            file.write(user_city + "\n")
+
         lines = clean_file()
 
     print_lines(lines)
@@ -86,20 +84,27 @@ def all_cities_list():
     while True:
         confirm = valid_input("\nWould you like to add a city (y/n): ")
 
-        if confirm == "y":
-            add_city()
-
-            lines = clean_file()
-            lines = remove_duplicates(lines)
-
-            print_lines(lines)
-
-        elif confirm == "n":
+        if confirm == "n":
             break
+
+        user_city = exit_input("Enter a city in Alaska: ").strip()
+
+        while verify_city(user_city) is None:
+            print("That city does not exist or is not located in Alaska.")
+            user_city = exit_input("Please try another city: ").strip()
+
+        with open(FILE_PATH, "a") as file:
+            file.write(user_city + "\n")
+
+        lines = clean_file()
+        lines = remove_duplicates(lines)
+
+        print_lines(lines)
 
     return lines
 
-def final_list(limit: int = None):
+# Returns list of all cities we want to retrieve weather APIs for
+def all_cities_list(limit: int = None):
     lines = clean_file()
     remove_invalid_cities(lines)
     lines = remove_duplicates(lines)
