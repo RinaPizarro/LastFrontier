@@ -1,11 +1,11 @@
 # Module for validating user input
-
 import sys
 import os
 
 from dotenv import load_dotenv
+from lastfrontier.open_weather_api import current_weather_api, lat_and_long
 from colorama import Fore, Back, Style, init
-from open_weather_api import current_weather_api, lat_and_long
+
 
 def valid_weather_api_key():
     api_key = os.getenv("OPEN_WEATHER_API_KEY")
