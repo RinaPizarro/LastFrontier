@@ -1,9 +1,10 @@
 from cities_table import alaskan_cities, alaskan_city_coord
 from user_cities import all_cities_list
 from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
-from sql_server import create_or_insert, find_existing_row
+from sql_server import create_or_insert, find_existing_row, connection
 from column_functions import output_headers_list, output_values_list, output_to_dict
 from colorama import Fore, Style, init
+from cities_table import alaskan_cities
 
 # REQUIRED TABLES:
 # alaskan_cities
@@ -11,7 +12,10 @@ from colorama import Fore, Style, init
 # air_pollution
 
 # This table contains Alaskan cities name, latitude, and longtitude
-def cities_table(db_connection, cities_list):
+def cities_table():
+
+    db_status, db_connection = connection()
+    cities_list = alaskan_cities()
     table_message_shown = False
     table_name = "alaskan_cities"
 
@@ -73,10 +77,11 @@ def cities_table(db_connection, cities_list):
 
     return True
 
-
 # This table contains weather information of all user selected Alaskan cities from alaskan_cities.txt
-def weather_table(db_connection, api_key, cities_list):
+def weather_table(api_key):
 
+    db_status, db_connection = connection()
+    cities_list = all_cities_list()
     table_message_shown = False
 
     for city in cities_list:
@@ -173,7 +178,10 @@ def weather_table(db_connection, api_key, cities_list):
     return True
 
 # This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
-def air_pollution_table(db_connection, api_key, cities_list):
+def air_pollution_table(api_key):
+
+    db_status, db_connection = connection()
+    cities_list = all_cities_list()
     table_message_shown = False
 
     for city in cities_list:

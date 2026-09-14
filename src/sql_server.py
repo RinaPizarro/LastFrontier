@@ -1,18 +1,27 @@
 import psycopg2
+import os
+
+from dotenv import load_dotenv
 from psycopg2 import sql
 
 # Connect to PostgreSQL Database
-def connection(username, password, host, port, database):
+def connection():
     try:
+        user_host = os.getenv("DB_HOST")
+        user_db_name = os.getenv("DB_NAME")
+        user_name = os.getenv("DB_USER")
+        user_password = os.getenv("DB_PASS")
+        user_port = os.getenv("DB_PORT")
+
         connection = psycopg2.connect(
-            host=host,
-            database=database,
-            user=username,
-            password=password,
-            port=port
+            host=user_host,
+            database=user_db_name,
+            user=user_name,
+            password=user_password,
+            port=user_port
         )
 
-        return True, connection
+        return True, "Connected successfully!"
 
     except psycopg2.OperationalError as error:
         return False, f"Connection failed: {error}"
