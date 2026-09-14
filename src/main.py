@@ -29,7 +29,7 @@ def main():
 
         print(Fore.LIGHTBLUE_EX, end="")
 
-        api_key = exit_input("Please enter your API Key: " + Style.RESET_ALL)
+        api_key = os.getenv("OPEN_WEATHER_API_KEY")
 
         # Test the API key using the first city
         lat, lon = w.lat_and_long(city_name=user_list[0])
@@ -47,10 +47,10 @@ def main():
         if status is False:
             print(
                 Fore.LIGHTRED_EX
-                + "That key did not work. Please try a different key.\n"
+                + "That key did not work.\n"
                 + Style.RESET_ALL
             )
-            continue
+            return
 
         elif status is None:
             print(output)
@@ -62,19 +62,18 @@ def main():
     delay_print("\nLet's connect to the LastFrontier database and import our weather information.")
 
     while True:
-        print(Fore.LIGHTBLUE_EX, end="")
-        user_host = exit_input("\nEnter host: " + Style.RESET_ALL)
-
-        print(Fore.LIGHTBLUE_EX, end="")
-        user_name = exit_input("Enter username: " + Style.RESET_ALL)
-
-        print(Fore.LIGHTBLUE_EX, end="")
-        user_password = exit_input("Enter password: " + Style.RESET_ALL)
+        user_host = os.getenv("DB_HOST")
+        user_db_name = os.getenv("DB_NAME")
+        user_name = os.getenv("DB_USER")
+        user_password = os.getenv("DB_PASS")
+        user_port = os.getenv("DB_PORT")
 
         status, conn_output = s.connection(
+            database=user_db_name,
             username=user_name,
             password=user_password,
-            host=user_host
+            host=user_host,
+            port=user_port
         )
 
         if status is True:
@@ -91,12 +90,7 @@ def main():
             + str(conn_output)
             + Style.RESET_ALL
         )
-
-        print(
-            Fore.LIGHTRED_EX
-            + "Let's try that again."
-            + Style.RESET_ALL
-        )
+        break
 
     #TABLE 1: CITIES_TABLE
     success = cities_table(

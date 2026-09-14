@@ -2,14 +2,14 @@ import psycopg2
 from psycopg2 import sql
 
 # Connect to PostgreSQL Database
-def connection(username, password, host):
+def connection(username, password, host, port, database):
     try:
         connection = psycopg2.connect(
             host=host,
-            database="LastFrontier",
+            database=database,
             user=username,
             password=password,
-            port=5432
+            port=port
         )
 
         return True, connection
