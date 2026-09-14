@@ -204,8 +204,7 @@ def create_or_insert(db_connection, table_name, data_dict):
     else:
 
         table_message = (
-            f"Table '{table_name}' exists. "
-            "Inserting data to table."
+            f"Table '{table_name}' exists. Inserting data to table.\n"
         )
 
     success, message = insert_data(
