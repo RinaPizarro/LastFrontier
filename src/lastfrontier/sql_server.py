@@ -76,21 +76,16 @@ def postgres_type(column_name, value):
         return "TEXT"
 
 # Create table in database
-def create_table(db_connection, table_name, data_dict):
+def create_table(db_connection, table_name, column_names):
     try:
         cursor = db_connection.cursor()
+
         columns = []
 
-        for column_name, value in data_dict.items():
+        for column_name in column_names:
 
-            data_type = postgres_type(
-                column_name,
-                value
-            )
-
-            column = sql.SQL("{} {}").format(
-                sql.Identifier(column_name),
-                sql.SQL(data_type)
+            column = sql.SQL("{} TEXT").format(
+                sql.Identifier(column_name)
             )
 
             columns.append(column)
