@@ -21,7 +21,7 @@ def connection():
             port=user_port
         )
 
-        return True, "Connected successfully!"
+        return True, connection
 
     except psycopg2.OperationalError as error:
         return False, f"Connection failed: {error}"
