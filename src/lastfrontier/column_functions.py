@@ -9,7 +9,7 @@ def universal_time():
         timespec="seconds"
     )
 
-# Retrieve potential column names from dictionary
+# Retrieve column names from JSON dictionary
 def output_headers_list(output):
     columns_headers = []
 
@@ -58,7 +58,7 @@ def output_headers_list(output):
 
     return columns_headers
 
-# Retrieves values for each column
+# Retrieve column values from JSON dictionary
 def output_values_list(output):
     column_values = []
 
@@ -109,15 +109,13 @@ def output_values_list(output):
 
     return column_values
 
-# Retrieves values with corresponding headers
+# Retrieve column names with values from JSON dictionary
 def output_to_dict(headers_output, values_output):
 
     if len(headers_output) != len(values_output):
         return (
             False,
-            "There is not enough values "
-            "for the existing columns."
-        )
+            "There is not enough values for the existing columns.")
 
     my_dict = dict(
         zip(
@@ -127,4 +125,3 @@ def output_to_dict(headers_output, values_output):
     )
 
     return True, my_dict
-

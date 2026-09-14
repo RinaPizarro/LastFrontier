@@ -21,7 +21,7 @@ def connection():
             port=user_port
         )
 
-        return True, connection
+        return True, connection # Connected Successfully
 
     except psycopg2.OperationalError as error:
         return False, f"Connection failed: {error}"
@@ -45,7 +45,7 @@ def find_table(db_connection, table_name, schema="public"):
             (schema, table_name)
         )
 
-        exists = cursor.fetchone()[0]
+        exists = cursor.fetchone()[0] # Boolean
         cursor.close()
 
         return exists
