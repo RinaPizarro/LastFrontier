@@ -5,6 +5,9 @@ from sql_server import create_or_insert, find_existing_row, connection
 from column_functions import output_headers_list, output_values_list, output_to_dict
 from colorama import Fore, Style, init
 from cities_table import alaskan_cities
+from dotenv import load_dotenv
+
+import os
 
 # REQUIRED TABLES:
 # alaskan_cities
@@ -78,9 +81,10 @@ def cities_table():
     return True
 
 # This table contains weather information of all user selected Alaskan cities from alaskan_cities.txt
-def weather_table(api_key):
+def weather_table():
 
     db_status, db_connection = connection()
+    api_key = os.getenv("OPEN_WEATHER_API_KEY")
     cities_list = all_cities_list()
     table_message_shown = False
 
@@ -178,10 +182,11 @@ def weather_table(api_key):
     return True
 
 # This table contains air pollution information for all user-selected Alaskan cities from alaskan_cities.txt
-def air_pollution_table(api_key):
+def air_pollution_table():
 
     db_status, db_connection = connection()
     cities_list = all_cities_list()
+    api_key = os.getenv("OPEN_WEATHER_API_KEY")
     table_message_shown = False
 
     for city in cities_list:

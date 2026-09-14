@@ -16,7 +16,6 @@ from required_tables import (
 )
 
 def main():
-
     init() # intialize colorama
     load_dotenv() # load .env file
 
