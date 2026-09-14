@@ -17,8 +17,10 @@ from lastfrontier.column_functions import (
 )
 from colorama import Fore, Style, init
 from dotenv import load_dotenv
+from pathlib import Path
 
 import os
+import json
 
 # REQUIRED TABLES:
 # alaskan_cities
@@ -26,6 +28,39 @@ import os
 # air_pollution
 
 # This table contains Alaskan cities name, latitude, and longtitude
+
+#TODO SEPERATE MASTER AND FACT TABLES
+
+# Determine table type 
+def table_type(table_name):
+    FILE_PATH = Path(__file__).resolve().parent / "data" / "tables.json"
+
+    with open(FILE_PATH,'r') as file:
+        output = json.load(file)
+
+        for key, value in output.items():
+            if table_name in value:
+                return key
+
+def required_table_create(table_name):
+    api_key = os.getenv("OPEN_WEATHER_API_KEY")
+    db_status, db_connection = connection()
+    table_message_shown = False
+
+    if table_type(table_name) == "Master":
+        cities_list = alaskan_cities()
+        
+    if table_type(table_name) == "Fact":
+        cities_list = all_cities_list()
+        
+    else:
+        return # stop the program 
+
+    
+
+def required_table_insert():
+    pass
+
 def cities_table():
 
     db_status, db_connection = connection()

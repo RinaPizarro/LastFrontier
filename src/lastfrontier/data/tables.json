@@ -1,0 +1,9 @@
+{
+  "master": [
+    "alaskan_cities"
+  ],
+  "fact": [
+    "air_pollution",
+    "weather"
+  ]
+}
