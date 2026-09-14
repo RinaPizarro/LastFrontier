@@ -3,8 +3,8 @@ from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.exc import GeocoderRateLimited
 
-import column_functions as func
-import sql_server as s
+import lastfrontier.column_functions as func
+import lastfrontier.sql_server as s
 
 def alaskan_cities():
     cities = City.get_cities_of_state('US', 'AK')

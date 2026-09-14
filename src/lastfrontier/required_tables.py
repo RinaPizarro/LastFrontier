@@ -1,10 +1,21 @@
-from cities_table import alaskan_cities, alaskan_city_coord
-from user_cities import all_cities_list
-from open_weather_api import current_weather_api, lat_and_long, air_pollution_api
-from sql_server import create_or_insert, find_existing_row, connection
-from column_functions import output_headers_list, output_values_list, output_to_dict
+from lastfrontier.cities_table import alaskan_cities, alaskan_city_coord
+from lastfrontier.user_cities import all_cities_list
+from lastfrontier.open_weather_api import (
+    current_weather_api,
+    lat_and_long,
+    air_pollution_api,
+)
+from lastfrontier.sql_server import (
+    create_or_insert,
+    find_existing_row,
+    connection,
+)
+from lastfrontier.column_functions import (
+    output_headers_list,
+    output_values_list,
+    output_to_dict,
+)
 from colorama import Fore, Style, init
-from cities_table import alaskan_cities
 from dotenv import load_dotenv
 
 import os
