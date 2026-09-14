@@ -65,7 +65,7 @@ def cities_table():
 
         # Insert city data (if lat and lon have not changed)
         status, count = find_existing_row(db_connection=db_connection,table_name=table_name,rows_dict=city_data)
-        if count > 0:
+        if int(count) > 0:
             print(f'Latitude and Longtitude for {city} has not changed. Skipping...')
         else:
             success, message = create_or_insert(
