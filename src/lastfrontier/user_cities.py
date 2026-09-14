@@ -1,6 +1,6 @@
 # Module for handling alaska_cities.txt file
 
-from lastfrontier import open_weather_api as w
+import lastfrontier.open_weather_api as w
 from lastfrontier.validation import exit_input, valid_input
 from lastfrontier.customizable import delay_print
 from pathlib import Path
