@@ -1,12 +1,13 @@
 # Module for handling alaska_cities.txt file
 
-import open_weather_api as w
-from validation import exit_input, valid_input
-from customizable import delay_print
+from lastfrontier import open_weather_api as w
+from lastfrontier.validation import exit_input, valid_input
+from lastfrontier.customizable import delay_print
 from pathlib import Path
+import os
 
 # Relative file path
-FILE_PATH = Path(__file__).resolve().parent.parent / "data" / "user_alaskan_cities.txt"
+FILE_PATH = Path(__file__).resolve().parent / "data" / "user_alaskan_cities.txt"
 
 # Remove whitespaces, remove empty lines in user_data\user_alaskan_cities.txt
 def clean_file():

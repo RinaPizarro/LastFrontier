@@ -1,12 +1,12 @@
 import argparse
 import sys 
 
-from user_cities import all_cities_list
-from required_tables import (
+from lastfrontier.user_cities import all_cities_list
+from lastfrontier.required_tables import (
     weather_table,
     air_pollution_table,
-    cities_table
-) 
+    cities_table,
+)
 
 def main():
     parser = argparse.ArgumentParser(
@@ -24,7 +24,7 @@ def main():
     parser_two.set_defaults(func=air_pollution_table)
 
     # Subcommand 3: add weather
-    parser_three = subparsers.add_parser("weather ", help="Creates and weather table in database")
+    parser_three = subparsers.add_parser("weather", help="Creates and weather table in database")
     parser_three.set_defaults(func=weather_table)
 
     # Subcommand 4: update user_cities list

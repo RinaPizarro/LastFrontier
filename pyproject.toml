@@ -10,4 +10,10 @@ authors = [{ name = "Karina" }]
 dependencies = []
 
 [project.scripts]
-lastfrontier = "src.cli:main"
+lastfrontier = "lastfrontier.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+lastfrontier = ["data/*.txt"]
