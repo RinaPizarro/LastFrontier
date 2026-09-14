@@ -9,12 +9,21 @@ from lastfrontier.required_tables import (
     cities_table,
 )
 
+class CustomHelpFormatter(argparse.HelpFormatter):
+    def add_usage(self, usage, actions, groups, prefix=None):
+        pass
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Digest data into database"
+        description="Digest data into database",
+        formatter_class=CustomHelpFormatter
     )
 
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers = parser.add_subparsers(
+    dest="command",
+    metavar="<command>",
+    required=True
+    )
 
     # Subcommand 1: add alaskan_cities table
     parser_one = subparsers.add_parser("alaskan-cities", help="Create and update alaskan_cities table in database")
