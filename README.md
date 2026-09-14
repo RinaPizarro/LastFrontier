@@ -7,6 +7,7 @@ LastFrontier is a data-ingestion program that retrieves data from OpenWeather an
 - pip install geopy
 - pip install country_state_city
 - pip install psycopg2 
+- pip install python-dotenv
 - import json
 - import datetime
 - import zoneinfo
@@ -16,3 +17,8 @@ LastFrontier is a data-ingestion program that retrieves data from OpenWeather an
 ## Files Explained
 ### alaskan_cities.txt
 This file contains the list of all cities expected to be used when retrieving weather data from the API. alaskan_cities_text.py allows users to add cities to the file, but does not allow users to remove cities. This would need to be done manually until implentation.
+
+## .Env
+1. Copy .env.example to .env
+2. Add your API keys to .env
+3. Run the program
