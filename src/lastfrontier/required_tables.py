@@ -61,20 +61,17 @@ def get_table_config(table_name):
 def get_api_function(table_name):
     config = get_table_config(table_name)
 
-    if config.get("type") != "Fact":
-        return False, (
-            f"Table '{table_name}' is not a Fact table."
-        )
-
     api_name = config.get("api_func")
 
     if not api_name:
-        return False, f"No API function is defined for {table_name}'."
+        return False, None
 
     api_function = API_FUNCTIONS.get(api_name)
 
     if api_function is None:
-        return False, f"API function '{api_name}' is not registered."
+        return False, (
+            f"API function '{api_name}' is not registered."
+        )
 
     return True, api_function
 
@@ -89,7 +86,6 @@ def required_table_create(table_name):
 
     table_type = config.get("type")
 
-    # MASTER TABLE
     if table_type == "Master":
 
         cities_list = all_alaskan_cities(count=1)
@@ -114,8 +110,7 @@ def required_table_create(table_name):
             output=city_output
         )
 
-    # FACT TABLE
-    elif table_type == "Fact":
+    elif config.get("api_func"):
 
         api_key = os.getenv(
             "OPEN_WEATHER_API_KEY"
@@ -164,15 +159,13 @@ def required_table_create(table_name):
             output=api_output
         )
 
-    # INVALID TABLE TYPE
     else:
 
         return False, (
-            f"Unsupported table type '{table_type}' "
+            f"Unsupported table configuration "
             f"for table '{table_name}'."
         )
 
-    # CREATE DATABASE TABLE
     status, message = create_table(
         db_connection=db_connection,
         table_name=table_name,
@@ -199,7 +192,6 @@ def insert_master_table(
             f"\nGetting data for {city}..."
         )
 
-        # GET CITY DATA
         city_output = alaskan_city_coord(
             city_name=city
         )
@@ -211,8 +203,6 @@ def insert_master_table(
             )
 
             continue
-
-        # CONVERT API OUTPUT
 
         city_headers = output_headers_list(
             output=city_output
@@ -238,7 +228,6 @@ def insert_master_table(
 
             continue
 
-        # CHECK EXISTING ROW
         status, count = find_existing_row(
             db_connection=db_connection,
             table_name=table_name,
@@ -254,7 +243,6 @@ def insert_master_table(
 
             continue
 
-        # INSERT CITY
         success, message = insert_data(
             db_connection=db_connection,
             table_name=table_name,
@@ -271,7 +259,6 @@ def insert_master_table(
 
             continue
 
-        # PRINT TABLE MESSAGE ONCE
         if not table_message_shown:
 
             print(message)
@@ -289,15 +276,12 @@ def insert_master_table(
     return True
 
 
-# INSERT FACT TABLE
-def insert_fact_table(
+# INSERT API TABLE
+
+def insert_api_table(
     table_name,
     db_connection
 ):
-    """
-    Insert data into a Fact table using the API
-    specified in tables.json.
-    """
 
     api_key = os.getenv(
         "OPEN_WEATHER_API_KEY"
@@ -313,7 +297,6 @@ def insert_fact_table(
 
         return False
 
-    # GET API FUNCTION
     success, api_function = get_api_function(
         table_name
     )
@@ -322,13 +305,15 @@ def insert_fact_table(
 
         print(
             Fore.LIGHTRED_EX
-            + api_function
+            + f"Unable to get API function for {table_name}."
             + Style.RESET_ALL
         )
 
+        if api_function:
+            print(api_function)
+
         return False
 
-    # GET CITIES
     cities_list = all_cities_list()
 
     table_message_shown = False
@@ -339,7 +324,6 @@ def insert_fact_table(
             f"\nGetting data for {city}..."
         )
 
-        # GET COORDINATES
         lat, lon = lat_and_long(
             city_name=city
         )
@@ -354,7 +338,6 @@ def insert_fact_table(
 
             continue
 
-        # CALL API
         status, api_output = api_function(
             lat=lat,
             lon=lon,
@@ -373,7 +356,6 @@ def insert_fact_table(
 
             continue
 
-        # CONVERT API OUTPUT
         headers = output_headers_list(
             output=api_output
         )
@@ -399,7 +381,6 @@ def insert_fact_table(
 
             continue
 
-        # INSERT FACT DATA
         success, message = insert_data(
             db_connection=db_connection,
             table_name=table_name,
@@ -418,7 +399,6 @@ def insert_fact_table(
 
             continue
 
-        # PRINT TABLE MESSAGE ONCE
         if not table_message_shown:
 
             print(
@@ -443,10 +423,6 @@ def insert_fact_table(
 
 # REQUIRED TABLE INSERT
 def required_table_insert(table_name):
-    """
-    Insert data into a Master or Fact table based
-    on the configuration in tables.json.
-    """
 
     db_status, db_connection = connection()
 
@@ -455,32 +431,16 @@ def required_table_insert(table_name):
 
     config = get_table_config(table_name)
 
-    table_type = config.get("type")
+    api_name = config.get("api_func")
 
-    # MASTER
-    if table_type == "Master":
+    if api_name:
 
-        return insert_master_table(
+        return insert_api_table(
             table_name=table_name,
             db_connection=db_connection
         )
 
-    # FACT
-    elif table_type == "Fact":
-
-        return insert_fact_table(
-            table_name=table_name,
-            db_connection=db_connection
-        )
-
-    # INVALID TYPE
-    else:
-
-        print(
-            Fore.LIGHTRED_EX
-            + f"Unsupported table type '{table_type}' "
-            f"for table '{table_name}'."
-            + Style.RESET_ALL
-        )
-
-        return False
+    return insert_master_table(
+        table_name=table_name,
+        db_connection=db_connection
+    )
