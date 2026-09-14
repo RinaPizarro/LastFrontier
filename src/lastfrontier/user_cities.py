@@ -1,7 +1,7 @@
 # Module for handling alaska_cities.txt file
 
 import lastfrontier.open_weather_api as w
-from lastfrontier.validation import exit_input, valid_input
+from lastfrontier.validation import exit_input, valid_input, verify_city
 from lastfrontier.customizable import delay_print
 from pathlib import Path
 import os
@@ -52,7 +52,7 @@ def print_lines(lines):
 # Remove non-Alaskan cities from file
 def remove_invalid_cities(lines):
     for line in lines[:]:
-        if not w.verify_city(line):
+        if not verify_city(line):
             lines.remove(line)
 
     with open(FILE_PATH, "w") as f:
@@ -63,7 +63,7 @@ def remove_invalid_cities(lines):
 def add_city():
     user_city = exit_input("Enter a city in Alaska: ").strip()
 
-    while w.verify_city(user_city) is None:
+    while verify_city(user_city) is None:
         print("That city does not exist or is not located in Alaska.")
         user_city =exit_input("Please try another city: ").strip()
 

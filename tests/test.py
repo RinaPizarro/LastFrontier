@@ -1,6 +1,4 @@
 # This .py file acts as a test file during production
+import lastfrontier.column_functions as ls
 
-from datetime import datetime
-import psycopg2
-from psycopg2 import sql
-
+print(1)

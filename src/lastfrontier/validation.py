@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from lastfrontier.open_weather_api import current_weather_api, lat_and_long
 from colorama import Fore, Back, Style, init
-
+from country_state_city import City
 
 def valid_weather_api_key():
     api_key = os.getenv("OPEN_WEATHER_API_KEY")
@@ -28,6 +28,15 @@ def valid_weather_api_key():
         return
 
     return api_key
+
+def verify_city(city_name):
+    cities = City.get_cities_of_state('US', 'AK')
+
+    for city in cities:
+        if city.name.lower() == city_name.lower():
+            return city
+
+    return None
 
 def valid_input(prompt):
     while True:

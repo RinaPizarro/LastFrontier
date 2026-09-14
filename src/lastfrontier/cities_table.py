@@ -1,7 +1,9 @@
+
 from country_state_city import City
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.exc import GeocoderRateLimited
+import time
 
 import lastfrontier.column_functions as func
 import lastfrontier.sql_server as s
@@ -19,10 +21,6 @@ def alaskan_city_coord(
     city_name,
     state_name="Alaska"
 ):
-    import time
-    from geopy.geocoders import Nominatim
-    from geopy.extra.rate_limiter import RateLimiter
-    from geopy.exc import GeocoderRateLimited
 
     # Create the client/limiter only once
     if not hasattr(alaskan_city_coord, "_safe_client"):

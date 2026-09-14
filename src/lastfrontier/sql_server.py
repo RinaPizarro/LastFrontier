@@ -231,8 +231,12 @@ def create_or_insert(db_connection, table_name, data_dict):
 def find_existing_row(db_connection, table_name, rows_dict):
     try:
         cursor = db_connection.cursor()
-        del rows_dict["time_utc"]
-        
+        rows_dict = {
+            key: value
+            for key, value in rows_dict.items()
+            if key != "time_utc"
+        }
+  
         where_clause = sql.SQL(" AND ").join(
             sql.Composed([
                 sql.Identifier(col),  # column name
@@ -254,7 +258,7 @@ def find_existing_row(db_connection, table_name, rows_dict):
 
         # Fetch results
         rows = cursor.fetchall()
-        return len(rows)
+        return True, len(rows)
     
     except Exception as error:
         db_connection.rollback()
