@@ -16,10 +16,11 @@ from required_tables import (
 )
 
 def main():
+
     init() # intialize colorama
     load_dotenv() # load .env file
 
-    delay_print("Welcome to LastFrontier. Let's import data into our database.")
+    delay_print("Welcome to LastFrontier.")
 
     user_list = a.all_cities_list()
     head_list = ac.alaskan_cities()
@@ -47,7 +48,7 @@ def main():
         if status is False:
             print(
                 Fore.LIGHTRED_EX
-                + "That key did not work.\n"
+                + "That key did not work. Please verify your Open Weather API key.\n"
                 + Style.RESET_ALL
             )
             return
@@ -59,7 +60,7 @@ def main():
         break
 
     # CONNECT TO POSTGRESQL DATABASE
-    delay_print("\nLet's connect to the LastFrontier database and import our weather information.")
+    delay_print("\nConnecting to database...\n")
 
     while True:
         user_host = os.getenv("DB_HOST")
@@ -79,10 +80,9 @@ def main():
         if status is True:
             print(
                 Fore.LIGHTGREEN_EX
-                + "Connected successfully!"
+                +"Connected successfully!"
                 + Style.RESET_ALL
             )
-
             break
 
         print(
