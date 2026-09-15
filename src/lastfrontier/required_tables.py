@@ -31,7 +31,11 @@ from pathlib import Path
 import os
 import json
 
-TABLES_FILE = (Path(__file__).resolve().parent / "data"/ "tables.json")
+TABLES_FILE = (
+    Path(__file__).resolve().parent.parent
+    / "data"
+    / "tables.json"
+)
 
 API_FUNCTIONS = {
     "current_weather_api": current_weather_api,

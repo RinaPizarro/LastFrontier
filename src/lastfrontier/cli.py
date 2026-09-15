@@ -1,15 +1,10 @@
 import argparse
 import sys
 from pathlib import Path
-import os
 
 from dotenv import load_dotenv
-import psycopg2
+import os
 
-from lastfrontier.required_tables import (
-    required_table_create,
-    required_table_insert,
-)
 
 
 ENV_FILE = (
@@ -17,6 +12,20 @@ ENV_FILE = (
 )
 
 load_dotenv(ENV_FILE)
+
+print("ENV FILE:", ENV_FILE)
+print("ENV EXISTS:", ENV_FILE.exists())
+print("DB_HOST:", os.getenv("DB_HOST"))
+print("DB_NAME:", os.getenv("DB_NAME"))
+print("DB_USER:", os.getenv("DB_USER"))
+print("DB_PASS LOADED:", bool(os.getenv("DB_PASS")))
+print("DB_PORT:", os.getenv("DB_PORT"))
+
+
+from lastfrontier.required_tables import (
+    required_table_create,
+    required_table_insert,
+)
 
 class CustomHelpFormatter(argparse.HelpFormatter):
 
