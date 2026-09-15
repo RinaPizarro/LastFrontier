@@ -1,52 +1,134 @@
-
 import argparse
-import sys 
+import sys
+from pathlib import Path
+import os
 
-from lastfrontier.user_cities import all_cities_list
+from dotenv import load_dotenv
+import psycopg2
+
 from lastfrontier.required_tables import (
-    weather_table,
-    air_pollution_table,
-    cities_table,
+    required_table_create,
+    required_table_insert,
 )
 
+
+ENV_FILE = (
+    Path(__file__).resolve().parent.parent / ".env"
+)
+
+load_dotenv(ENV_FILE)
+
 class CustomHelpFormatter(argparse.HelpFormatter):
-    def add_usage(self, usage, actions, groups, prefix=None):
+
+    def add_usage(
+        self,
+        usage,
+        actions,
+        groups,
+        prefix=None
+    ):
         pass
 
+
+def add_table_parser(
+    subparsers,
+    command,
+    table_name,
+    help_text
+):
+
+    table_parser = subparsers.add_parser(
+        command,
+        help=help_text,
+        description=help_text,
+        formatter_class=CustomHelpFormatter
+    )
+
+    actions = table_parser.add_mutually_exclusive_group(
+        required=True
+    )
+
+    actions.add_argument(
+        "--create",
+        action="store_true",
+        help="Create the table."
+    )
+
+    actions.add_argument(
+        "--insert",
+        action="store_true",
+        help="Insert data into the table."
+    )
+
+    table_parser.set_defaults(
+        table_name=table_name
+    )
+
+
 def main():
+
     parser = argparse.ArgumentParser(
         description="Digest data into database",
         formatter_class=CustomHelpFormatter
     )
 
     subparsers = parser.add_subparsers(
-    dest="command",
-    metavar="<command>",
-    required=True
+        dest="command",
+        metavar="<command>",
+        required=True
     )
 
-    # Subcommand 1: add alaskan_cities table
-    parser_one = subparsers.add_parser("alaskan-cities", help="Create and update alaskan_cities table in database")
-    parser_one.set_defaults(func=cities_table)
+    add_table_parser(
+        subparsers,
+        command="alaskan-cities",
+        table_name="alaskan_cities",
+        help_text="Create or update the alaskan_cities table."
+    )
 
-    # Subcommand 2: add air_pollution_table
-    parser_two = subparsers.add_parser("air-pollution", help="Creates and air_pollution table in database")
-    parser_two.set_defaults(func=air_pollution_table)
+    add_table_parser(
+        subparsers,
+        command="air-pollution",
+        table_name="air_pollution",
+        help_text="Create or update the air_pollution table."
+    )
 
-    # Subcommand 3: add weather
-    parser_three = subparsers.add_parser("weather", help="Creates and weather table in database")
-    parser_three.set_defaults(func=weather_table)
-
-    # Subcommand 4: update user_cities list
-    parser_four = subparsers.add_parser("user-cities", help="Update list of selected cities")
-    parser_four.set_defaults(func=all_cities_list)
+    add_table_parser(
+        subparsers,
+        command="weather",
+        table_name="weather",
+        help_text="Create or update the weather table."
+    )
 
     try:
+
         args = parser.parse_args()
-        args.func()
+
+        if args.create:
+
+            success, message = required_table_create(
+                table_name=args.table_name
+            )
+
+            if not success:
+                print(message)
+                sys.exit(1)
+
+            print(message)
+
+        elif args.insert:
+
+            success = required_table_insert(
+                table_name=args.table_name
+            )
+
+            if not success:
+                sys.exit(1)
+
     except Exception:
+
         import traceback
         traceback.print_exc()
+
         sys.exit(1)
 
 

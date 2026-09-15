@@ -4,9 +4,7 @@ from lastfrontier.cities_table import (
 )
 
 from lastfrontier.user_cities import (
-    all_cities_list,
-    final_list
-)
+    all_cities_list)
 
 from lastfrontier.open_weather_api import (
     current_weather_api,
@@ -41,7 +39,6 @@ API_FUNCTIONS = {
 }
 
 # TABLE CONFIGURATION
-
 def load_table_config():
     with open(TABLES_FILE, "r") as file:
         return json.load(file)
@@ -121,7 +118,7 @@ def required_table_create(table_name):
                 "OPEN_WEATHER_API_KEY is not set."
             )
 
-        cities_list = final_list(limit=1)
+        cities_list = all_cities_list(limit=1)
 
         if not cities_list:
             return False, (
@@ -176,7 +173,6 @@ def required_table_create(table_name):
 
 
 # INSERT MASTER TABLE
-
 def insert_master_table(
     table_name,
     db_connection
@@ -277,7 +273,6 @@ def insert_master_table(
 
 
 # INSERT API TABLE
-
 def insert_api_table(
     table_name,
     db_connection
@@ -427,7 +422,7 @@ def required_table_insert(table_name):
     db_status, db_connection = connection()
 
     if not db_status:
-        return False
+        return False, db_connection
 
     config = get_table_config(table_name)
 
@@ -435,12 +430,16 @@ def required_table_insert(table_name):
 
     if api_name:
 
-        return insert_api_table(
+        success = insert_api_table(
             table_name=table_name,
             db_connection=db_connection
         )
 
-    return insert_master_table(
-        table_name=table_name,
-        db_connection=db_connection
-    )
+    else:
+
+        success = insert_master_table(
+            table_name=table_name,
+            db_connection=db_connection
+        )
+
+    return success, None
