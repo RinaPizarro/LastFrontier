@@ -3,13 +3,8 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
-import os
 
-
-ENV_FILE = (
-    Path(__file__).resolve().parent.parent / ".env"
-)
-
+ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(ENV_FILE)
 
 from lastfrontier.required_tables import (
@@ -17,46 +12,12 @@ from lastfrontier.required_tables import (
     required_table_insert,
 )
 
-class CustomHelpFormatter(argparse.HelpFormatter):
 
-    def add_usage(
-        self,
-        usage,
-        actions,
-        groups,
-        prefix=None
-    ):
-        pass
-
-
-def add_table_parser(
-    subparsers,
-    command,
-    table_name,
-    help_text
-):
-
+def add_table_parser(subparsers, command, table_name, help_text):
     table_parser = subparsers.add_parser(
         command,
         help=help_text,
         description=help_text,
-        formatter_class=CustomHelpFormatter
-    )
-
-    actions = table_parser.add_mutually_exclusive_group(
-        required=True
-    )
-
-    actions.add_argument(
-        "--create",
-        action="store_true",
-        help="Create the table."
-    )
-
-    actions.add_argument(
-        "--insert",
-        action="store_true",
-        help="Insert data into the table."
     )
 
     table_parser.set_defaults(
@@ -67,35 +28,56 @@ def add_table_parser(
 def main():
 
     parser = argparse.ArgumentParser(
-        description="Digest data into database",
-        formatter_class=CustomHelpFormatter
+        description=(
+            "LastFrontier is a CLI package that allows users to create "
+            "tables in PostgreSQL databases and ingest data directly "
+            "from the command line."
+        )
     )
 
+    # Actions
+    actions = parser.add_mutually_exclusive_group(required=True)
+
+    actions.add_argument(
+        "-c",
+        "--create",
+        action="store_true",
+        help="Create the table.",
+    )
+
+    actions.add_argument(
+        "-i",
+        "--insert",
+        action="store_true",
+        help="Insert data into the table.",
+    )
+
+    # Tables
     subparsers = parser.add_subparsers(
         dest="command",
         metavar="<command>",
-        required=True
+        required=True,
     )
 
     add_table_parser(
         subparsers,
         command="alaskan-cities",
         table_name="alaskan_cities",
-        help_text="Create or update the alaskan_cities table."
+        help_text="Table containing city name, latitude, and longitude.",
     )
 
     add_table_parser(
         subparsers,
         command="air-pollution",
         table_name="air_pollution",
-        help_text="Create or update the air_pollution table."
+        help_text="Table containing air pollution data in select cities.",
     )
 
     add_table_parser(
         subparsers,
         command="weather",
         table_name="weather",
-        help_text="Create or update the weather table."
+        help_text="Table containing current weather data in select cities.",
     )
 
     try:
@@ -108,11 +90,10 @@ def main():
                 table_name=args.table_name
             )
 
-            if not success:
-                print(message)
-                sys.exit(1)
-
             print(message)
+
+            if not success:
+                sys.exit(1)
 
         elif args.insert:
 
