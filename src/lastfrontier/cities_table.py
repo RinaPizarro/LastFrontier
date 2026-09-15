@@ -8,6 +8,7 @@ import time
 import lastfrontier.column_functions as func
 import lastfrontier.sql_server as s
 
+# Return list of Alaskan cities
 def all_alaskan_cities(count: int = None):
     cities = City.get_cities_of_state('US', 'AK')
     cities_list = []
@@ -20,6 +21,7 @@ def all_alaskan_cities(count: int = None):
     else:
         return cities_list[:count]
 
+# Return dictionary with city name and coordinate
 def alaskan_city_coord(
     city_name,
     state_name="Alaska"
