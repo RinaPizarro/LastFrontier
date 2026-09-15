@@ -7,7 +7,11 @@ from pathlib import Path
 import os
 
 # Relative file path
-FILE_PATH = Path(__file__).resolve().parent / "data" / "user_alaskan_cities.txt"
+FILE_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "data"
+    / "user_alaskan_cities.txt"
+)
 
 # Remove whitespaces, remove empty lines in user_data\user_alaskan_cities.txt
 def clean_file():
