@@ -42,14 +42,14 @@ def main():
         "-c",
         "--create",
         action="store_true",
-        help="Create the table.",
+        help="create the table",
     )
 
     actions.add_argument(
         "-i",
         "--insert",
         action="store_true",
-        help="Insert data into the table.",
+        help="insert data into the table",
     )
 
     # Tables
