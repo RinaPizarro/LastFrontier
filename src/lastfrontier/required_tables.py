@@ -42,7 +42,6 @@ API_FUNCTIONS = {
     "air_pollution_api": air_pollution_api
 }
 
-# TABLE CONFIGURATION
 def load_table_config():
     with open(TABLES_FILE, "r") as file:
         return json.load(file)
@@ -58,7 +57,6 @@ def get_table_config(table_name):
 
     return TABLE_CONFIG[table_name]
 
-# Return the API function associated with a Fact table.
 def get_api_function(table_name):
     config = get_table_config(table_name)
 
@@ -76,7 +74,6 @@ def get_api_function(table_name):
 
     return True, api_function
 
-# CREATE TABLE
 def required_table_create(table_name):
     db_status, db_connection = connection()
 
@@ -108,6 +105,10 @@ def required_table_create(table_name):
             )
 
         headers_list = output_headers_list(
+            output=city_output
+        )
+
+        values_list = output_values_list(
             output=city_output
         )
 
@@ -160,6 +161,10 @@ def required_table_create(table_name):
             output=api_output
         )
 
+        values_list = output_values_list(
+            output=api_output
+        )
+
     else:
 
         return False, (
@@ -170,13 +175,13 @@ def required_table_create(table_name):
     status, message = create_table(
         db_connection=db_connection,
         table_name=table_name,
-        column_names=headers_list
+        column_names=headers_list,
+        column_values=values_list
     )
 
     return status, message
 
 
-# INSERT MASTER TABLE
 def insert_master_table(
     table_name,
     db_connection
@@ -234,6 +239,17 @@ def insert_master_table(
             rows_dict=city_data
         )
 
+        if not status:
+
+            print(
+                f"Unable to check existing data "
+                f"for {city}."
+            )
+
+            print(count)
+
+            continue
+
         if int(count) > 0:
 
             print(
@@ -276,7 +292,6 @@ def insert_master_table(
     return True
 
 
-# INSERT API TABLE
 def insert_api_table(
     table_name,
     db_connection
@@ -420,7 +435,6 @@ def insert_api_table(
 
     return True
 
-# REQUIRED TABLE INSERT
 def required_table_insert(table_name):
 
     db_status, db_connection = connection()

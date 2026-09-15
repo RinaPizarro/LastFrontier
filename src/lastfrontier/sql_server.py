@@ -1,10 +1,8 @@
 import psycopg2
 import os
 
-from dotenv import load_dotenv
 from psycopg2 import sql
 
-# Connect to PostgreSQL Database
 def connection():
     try:
         user_host = os.getenv("DB_HOST")
@@ -21,12 +19,11 @@ def connection():
             port=user_port
         )
 
-        return True, connection # Connected Successfully
+        return True, connection
 
     except psycopg2.OperationalError as error:
         return False, f"Connection failed: {error}"
 
-# Find table in database
 def find_table(db_connection, table_name, schema="public"):
     try:
         cursor = db_connection.cursor()
@@ -45,7 +42,7 @@ def find_table(db_connection, table_name, schema="public"):
             (schema, table_name)
         )
 
-        exists = cursor.fetchone()[0] # Boolean
+        exists = cursor.fetchone()[0]
         cursor.close()
 
         return exists
@@ -54,7 +51,6 @@ def find_table(db_connection, table_name, schema="public"):
         print(f"Error checking table existence: {error}")
         return False
 
-# Determine column data types
 def postgres_type(column_name, value):
 
     if column_name.lower() == "time_utc":
@@ -75,17 +71,30 @@ def postgres_type(column_name, value):
     else:
         return "TEXT"
 
-# Create table in database
-def create_table(db_connection, table_name, column_names):
+def create_table(
+    db_connection,
+    table_name,
+    column_names,
+    column_values
+):
     try:
         cursor = db_connection.cursor()
 
         columns = []
 
-        for column_name in column_names:
+        for column_name, value in zip(
+            column_names,
+            column_values
+        ):
 
-            column = sql.SQL("{} TEXT").format(
-                sql.Identifier(column_name)
+            data_type = postgres_type(
+                column_name,
+                value
+            )
+
+            column = sql.SQL("{} {}").format(
+                sql.Identifier(column_name),
+                sql.SQL(data_type)
             )
 
             columns.append(column)
@@ -107,7 +116,6 @@ def create_table(db_connection, table_name, column_names):
         db_connection.rollback()
         return False, str(error)
 
-# insert data to existing table in database
 def insert_data(db_connection, table_name, data_dict):
     try:
         cursor = db_connection.cursor()
@@ -197,7 +205,8 @@ def create_or_insert(db_connection, table_name, data_dict):
         status, message = create_table(
             db_connection=db_connection,
             table_name=table_name,
-            data_dict=data_dict
+            column_names=list(data_dict.keys()),
+            column_values=list(data_dict.values())
         )
 
         if status is False:
@@ -222,7 +231,6 @@ def create_or_insert(db_connection, table_name, data_dict):
 
     return True, table_message
 
-# Find existing row in table
 def find_existing_row(db_connection, table_name, rows_dict):
     try:
         cursor = db_connection.cursor()
@@ -234,9 +242,9 @@ def find_existing_row(db_connection, table_name, rows_dict):
   
         where_clause = sql.SQL(" AND ").join(
             sql.Composed([
-                sql.Identifier(col),  # column name
+                sql.Identifier(col),
                 sql.SQL(" = "),
-                sql.Placeholder()     # placeholder for value
+                sql.Placeholder()
             ])
             for col in rows_dict.keys()
         )
@@ -248,10 +256,8 @@ def find_existing_row(db_connection, table_name, rows_dict):
 
         values = tuple(rows_dict.values())
 
-        # Execute with parameters
         cursor.execute(query, values)
 
-        # Fetch results
         rows = cursor.fetchall()
         return True, len(rows)
     
