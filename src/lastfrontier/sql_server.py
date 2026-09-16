@@ -187,7 +187,7 @@ def insert_data(db_connection, table_name, data_dict):
         db_connection.commit()
         cursor.close()
 
-        return True, f"Data inserted into '{table_name}'."
+        return True
 
     except Exception as error:
         db_connection.rollback()

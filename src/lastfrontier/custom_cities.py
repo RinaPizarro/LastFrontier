@@ -5,7 +5,7 @@ from lastfrontier.validation import verify_city
 
 
 JSON_FILE = (
-    Path(__file__).resolve().parent.parent
+    Path(__file__).resolve().parent
     / "data"
     / "custom_cities.json"
 )
@@ -45,3 +45,4 @@ def clean_cities(limit: int = None):
     save_custom_cities(unique_cities)
 
     return unique_cities
+

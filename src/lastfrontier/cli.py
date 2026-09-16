@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(ENV_FILE)
 
-from lastfrontier.required_tables import (
+from lastfrontier.tables_config import (
     required_table_create,
     required_table_insert,
 )

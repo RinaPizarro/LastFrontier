@@ -32,11 +32,8 @@ from pathlib import Path
 import os
 import json
 
-TABLES_FILE = (
-    Path(__file__).resolve().parent.parent
-    / "data"
-    / "tables.json"
-)
+TABLES_FILE = (Path(__file__).resolve().parent / "data" / "tables.json")
+
 
 API_FUNCTIONS = {
     "current_weather_api": current_weather_api,
@@ -190,8 +187,6 @@ def insert_master_table(
 
     cities_list = all_alaskan_cities()
 
-    table_message_shown = False
-
     for city in cities_list:
 
         print(
@@ -260,7 +255,7 @@ def insert_master_table(
 
             continue
 
-        success, message = insert_data(
+        success=insert_data(
             db_connection=db_connection,
             table_name=table_name,
             data_dict=city_data
@@ -272,22 +267,14 @@ def insert_master_table(
                 f"{city} was not inserted."
             )
 
-            print(message)
-
             continue
-
-        if not table_message_shown:
-
-            print(message)
-
-            table_message_shown = True
 
         print(
             f"{city} imported successfully."
         )
 
     print(
-        f"{table_name} table has been processed."
+        f"\n{table_name} table has been processed."
     )
 
     return True
@@ -330,8 +317,6 @@ def insert_api_table(
         return False
 
     cities_list = clean_cities()
-
-    table_message_shown = False
 
     for city in cities_list:
 
@@ -396,7 +381,7 @@ def insert_api_table(
 
             continue
 
-        success, message = insert_data(
+        success = insert_data(
             db_connection=db_connection,
             table_name=table_name,
             data_dict=data
@@ -410,19 +395,7 @@ def insert_api_table(
                 + Style.RESET_ALL
             )
 
-            print(message)
-
             continue
-
-        if not table_message_shown:
-
-            print(
-                Fore.LIGHTYELLOW_EX
-                + message
-                + Style.RESET_ALL
-            )
-
-            table_message_shown = True
 
         print(
             Fore.LIGHTGREEN_EX
