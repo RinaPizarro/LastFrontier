@@ -123,6 +123,7 @@ def insert_data(db_connection, table_name, data_dict):
         for column, value in data_dict.items():
 
             if isinstance(value, (dict, list, tuple, set)):
+                cursor.close()
                 return (
                     False,
                     f"Column '{column}' contains unsupported "
@@ -187,7 +188,7 @@ def insert_data(db_connection, table_name, data_dict):
         db_connection.commit()
         cursor.close()
 
-        return True
+        return True, None
 
     except Exception as error:
         db_connection.rollback()

@@ -17,7 +17,8 @@ from lastfrontier.sql_server import (
     connection,
     create_table,
     insert_data,
-    find_existing_row
+    find_existing_row,
+    find_table
 )
 
 from lastfrontier.column_functions import (
@@ -255,7 +256,7 @@ def insert_master_table(
 
             continue
 
-        success=insert_data(
+        success, message = insert_data(
             db_connection=db_connection,
             table_name=table_name,
             data_dict=city_data
@@ -266,6 +267,8 @@ def insert_master_table(
             print(
                 f"{city} was not inserted."
             )
+
+            print(message)
 
             continue
 
@@ -381,7 +384,7 @@ def insert_api_table(
 
             continue
 
-        success = insert_data(
+        success, message = insert_data(
             db_connection=db_connection,
             table_name=table_name,
             data_dict=data
@@ -394,6 +397,8 @@ def insert_api_table(
                 + f"{city} was not inserted."
                 + Style.RESET_ALL
             )
+
+            print(message)
 
             continue
 
@@ -415,6 +420,16 @@ def required_table_insert(table_name):
 
     if not db_status:
         return False, db_connection
+
+    if not find_table(
+        db_connection=db_connection,
+        table_name=table_name
+    ):
+        return False, (
+            f"Table '{table_name}' does not exist. "
+            f"Create it first with: "
+            f"lastfrontier -c {table_name.replace('_', '-')}"
+        )
 
     config = get_table_config(table_name)
 
