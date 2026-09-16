@@ -43,18 +43,47 @@ def configure():
 
     ENV_FILE.write_text(
         f"""OPEN_WEATHER_API_KEY={open_weather_api_key}
-            CENSUS_API={census_api}
-            ALASKA_511_API={alaska_511_api}
-            DB_HOST={db_host}
-            DB_NAME={db_name}
-            DB_USER={db_user}
-            DB_PASS={db_pass}
-            DB_PORT={db_port}
-            """,
+CENSUS_API={census_api}
+ALASKA_511_API={alaska_511_api}
+DB_HOST={db_host}
+DB_NAME={db_name}
+DB_USER={db_user}
+DB_PASS={db_pass}
+DB_PORT={db_port}
+""",
         encoding="utf-8",
     )
 
     print(f"\nConfiguration saved to:\n{ENV_FILE}")
+
+
+def update_config(key, value):
+
+    if not ENV_FILE.exists():
+
+        raise RuntimeError(
+            "LastFrontier is not configured.\n"
+            "Run:\n\n"
+            "    lastfrontier configure\n"
+        )
+
+    lines = ENV_FILE.read_text(
+        encoding="utf-8"
+    ).splitlines()
+
+    for index, line in enumerate(lines):
+
+        if line.startswith(f"{key}="):
+
+            lines[index] = f"{key}={value}"
+
+            break
+
+    ENV_FILE.write_text(
+        "\n".join(lines) + "\n",
+        encoding="utf-8",
+    )
+
 
 def load_config():
 

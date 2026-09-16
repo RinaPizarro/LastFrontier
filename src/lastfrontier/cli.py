@@ -1,9 +1,11 @@
 import argparse
 import sys
+from getpass import getpass
 
 from lastfrontier.config import (
     configure,
-    load_config
+    load_config,
+    update_config
 )
 
 from lastfrontier.tables_config import (
@@ -56,10 +58,47 @@ def main():
         metavar="<command>",
     )
 
-    subparsers.add_parser(
+    configure_parser = subparsers.add_parser(
         "configure",
         help="create or update LastFrontier configuration",
         description="Create or update LastFrontier configuration.",
+    )
+
+    configure_parser.add_argument(
+        "--db-name",
+    )
+
+    configure_parser.add_argument(
+        "--db-host",
+    )
+
+    configure_parser.add_argument(
+        "--db-user",
+    )
+
+    configure_parser.add_argument(
+        "--db-port",
+        type=int,
+    )
+
+    configure_parser.add_argument(
+        "--db-pass",
+        action="store_true",
+    )
+
+    configure_parser.add_argument(
+        "--open-weather-api-key",
+        action="store_true",
+    )
+
+    configure_parser.add_argument(
+        "--census-api",
+        action="store_true",
+    )
+
+    configure_parser.add_argument(
+        "--alaska-511-api",
+        action="store_true",
     )
 
     add_table_parser(
@@ -89,7 +128,50 @@ def main():
 
         if args.command == "configure":
 
-            configure()
+            updates = {
+                "DB_NAME": args.db_name,
+                "DB_HOST": args.db_host,
+                "DB_USER": args.db_user,
+                "DB_PORT": args.db_port,
+            }
+
+            if args.db_pass:
+                updates["DB_PASS"] = getpass("Database password: ")
+
+            if args.open_weather_api_key:
+                updates["OPEN_WEATHER_API_KEY"] = getpass(
+                    "OpenWeather API key: "
+                )
+
+            if args.census_api:
+                updates["CENSUS_API"] = getpass(
+                    "Census API key: "
+                )
+
+            if args.alaska_511_api:
+                updates["ALASKA_511_API"] = getpass(
+                    "Alaska 511 API key: "
+                )
+
+            updates = {
+                key: value
+                for key, value in updates.items()
+                if value is not None
+            }
+
+            if not updates:
+
+                configure()
+
+            else:
+
+                for key, value in updates.items():
+                    update_config(
+                        key,
+                        str(value)
+                    )
+
+                print("\nConfiguration updated.")
 
             return
 
