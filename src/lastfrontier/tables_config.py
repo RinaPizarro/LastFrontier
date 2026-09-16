@@ -76,6 +76,27 @@ def get_api_function(table_name):
 
     return True, api_function
 
+def call_api(
+    api_function,
+    params,
+    api_key,
+    lat=None,
+    lon=None
+):
+
+    available_params = {
+        "api_key": api_key,
+        "lat": lat,
+        "lon": lon
+    }
+
+    kwargs = {
+        param: available_params[param]
+        for param in params
+    }
+
+    return api_function(**kwargs)
+
 def required_table_create(table_name, config):
     db_status, db_connection = connection(config)
 
@@ -116,25 +137,39 @@ def required_table_create(table_name, config):
 
     elif table_config.get("api_func"):
 
-        api_key = config.open_weather_api_key
-
-        cities_list = clean_cities()
-
-        if not cities_list:
+        if table_config.get("api_source") == "Open Weather":
+            api_key = config.open_weather_api_key
+        elif table_config.get("api_source") == "Alaska 511":
+            api_key = config.alaska_511_api
+        else:
             return False, (
-                "No cities were found."
+                f"Unknown API source for {table_name}."
             )
 
-        city = cities_list[0]
+        params = table_config.get("params", [])
 
-        lat, lon = lat_and_long(
-            city_name=city
-        )
+        lat = None
+        lon = None
 
-        if lat is None or lon is None:
-            return False, (
-                f"Unable to find coordinates for {city}."
+        if "lat" in params or "lon" in params:
+
+            cities_list = clean_cities()
+
+            if not cities_list:
+                return False, (
+                    "No cities were found."
+                )
+
+            city = cities_list[0]
+
+            lat, lon = lat_and_long(
+                city_name=city
             )
+
+            if lat is None or lon is None:
+                return False, (
+                    f"Unable to find coordinates for {city}."
+                )
 
         success, api_function = get_api_function(
             table_name
@@ -143,10 +178,12 @@ def required_table_create(table_name, config):
         if not success:
             return False, api_function
 
-        status, api_output = api_function(
+        status, api_output = call_api(
+            api_function=api_function,
+            params=params,
+            api_key=api_key,
             lat=lat,
-            lon=lon,
-            api_key=api_key
+            lon=lon
         )
 
         if not status:
@@ -315,9 +352,9 @@ def insert_api_table(table_name, db_connection, config):
 
         return False
 
-    coord_required = table_config.get("coord_required")
+    params = table_config.get("params", [])
 
-    if coord_required:
+    if "lat" in params or "lon" in params:
 
         cities_list = clean_cities()
 
@@ -341,10 +378,12 @@ def insert_api_table(table_name, db_connection, config):
 
                 continue
 
-            status, api_output = api_function(
+            status, api_output = call_api(
+                api_function=api_function,
+                params=params,
+                api_key=api_key,
                 lat=lat,
-                lon=lon,
-                api_key=api_key
+                lon=lon
             )
 
             if not status:
@@ -410,9 +449,9 @@ def insert_api_table(table_name, db_connection, config):
 
     else:
 
-        status, api_output = api_function(
-            lat=0,
-            lon=0,
+        status, api_output = call_api(
+            api_function=api_function,
+            params=params,
             api_key=api_key
         )
 
