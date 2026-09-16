@@ -3,8 +3,9 @@ from lastfrontier.cities_table import (
     alaskan_city_coord
 )
 
-from lastfrontier.user_cities import (
-    all_cities_list)
+from lastfrontier.custom_cities import (
+    clean_cities
+)
 
 from lastfrontier.open_weather_api import (
     current_weather_api,
@@ -123,7 +124,7 @@ def required_table_create(table_name):
                 "OPEN_WEATHER_API_KEY is not set."
             )
 
-        cities_list = all_cities_list(limit=1)
+        cities_list = clean_cities()
 
         if not cities_list:
             return False, (
@@ -328,7 +329,7 @@ def insert_api_table(
 
         return False
 
-    cities_list = all_cities_list()
+    cities_list = clean_cities()
 
     table_message_shown = False
 
