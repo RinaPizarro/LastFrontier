@@ -127,7 +127,7 @@ def insert_data(db_connection, table_name, data_dict):
                 return (
                     False,
                     f"Column '{column}' contains unsupported "
-                    f"data type: {type(value).__name__}."
+                    f"data type: {type(value).__name}."
                 )
 
             check_column = """
