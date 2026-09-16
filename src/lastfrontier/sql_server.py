@@ -60,7 +60,7 @@ def postgres_type(column_name, value):
         return "BOOLEAN"
 
     elif isinstance(value, int):
-        return "INTEGER"
+        return "BIGINT"
 
     elif isinstance(value, float):
         return "DOUBLE PRECISION"
