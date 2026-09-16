@@ -28,7 +28,8 @@ from lastfrontier.sql_server import (
 from lastfrontier.column_functions import (
     output_headers_list,
     output_values_list,
-    output_to_dict
+    output_to_dict,
+    output_records_list
 )
 
 from colorama import Fore, Style
@@ -189,12 +190,21 @@ def required_table_create(table_name, config):
         if not status:
             return False, api_output
 
-        headers_list = output_headers_list(
+        records = output_records_list(
             output=api_output
         )
 
+        if not records:
+            return False, (
+                f"No data was returned for {table_name}."
+            )
+
+        headers_list = output_headers_list(
+            output=records[0]
+        )
+
         values_list = output_values_list(
-            output=api_output
+            output=records[0]
         )
 
     else:
@@ -398,48 +408,64 @@ def insert_api_table(table_name, db_connection, config):
 
                 continue
 
-            headers = output_headers_list(
+            records = output_records_list(
                 output=api_output
             )
 
-            values = output_values_list(
-                output=api_output
-            )
-
-            success, data = output_to_dict(
-                headers_output=headers,
-                values_output=values
-            )
-
-            if not success:
+            if not records:
 
                 print(
                     Fore.LIGHTRED_EX
-                    + f"Unable to process data for {city}."
+                    + f"No data was returned for {city}."
                     + Style.RESET_ALL
                 )
 
-                print(data)
-
                 continue
 
-            success, message = insert_data(
-                db_connection=db_connection,
-                table_name=table_name,
-                data_dict=data
-            )
+            for record in records:
 
-            if not success:
-
-                print(
-                    Fore.LIGHTRED_EX
-                    + f"{city} was not inserted."
-                    + Style.RESET_ALL
+                headers = output_headers_list(
+                    output=record
                 )
 
-                print(message)
+                values = output_values_list(
+                    output=record
+                )
 
-                continue
+                success, data = output_to_dict(
+                    headers_output=headers,
+                    values_output=values
+                )
+
+                if not success:
+
+                    print(
+                        Fore.LIGHTRED_EX
+                        + f"Unable to process data for {city}."
+                        + Style.RESET_ALL
+                    )
+
+                    print(data)
+
+                    continue
+
+                success, message = insert_data(
+                    db_connection=db_connection,
+                    table_name=table_name,
+                    data_dict=data
+                )
+
+                if not success:
+
+                    print(
+                        Fore.LIGHTRED_EX
+                        + f"{city} was not inserted."
+                        + Style.RESET_ALL
+                    )
+
+                    print(message)
+
+                    continue
 
             print(
                 Fore.LIGHTGREEN_EX
@@ -466,46 +492,62 @@ def insert_api_table(table_name, db_connection, config):
 
             return False
 
-        headers = output_headers_list(
+        records = output_records_list(
             output=api_output
         )
 
-        values = output_values_list(
-            output=api_output
-        )
+        if not records:
 
-        success, data = output_to_dict(
-            headers_output=headers,
-            values_output=values
-        )
-
-        if not success:
             print(
                 Fore.LIGHTRED_EX
-                + f"Unable to process data."
+                + f"No data was returned."
                 + Style.RESET_ALL
             )
 
-            print(data)
-
             return False
 
-        success, message = insert_data(
-            db_connection=db_connection,
-            table_name=table_name,
-            data_dict=data
-        )
+        for record in records:
 
-        if not success:
-            print(
-                Fore.LIGHTRED_EX
-                + f"Data was not inserted."
-                + Style.RESET_ALL
+            headers = output_headers_list(
+                output=record
             )
 
-            print(message)
+            values = output_values_list(
+                output=record
+            )
 
-            return False
+            success, data = output_to_dict(
+                headers_output=headers,
+                values_output=values
+            )
+
+            if not success:
+                print(
+                    Fore.LIGHTRED_EX
+                    + f"Unable to process data."
+                    + Style.RESET_ALL
+                )
+
+                print(data)
+
+                return False
+
+            success, message = insert_data(
+                db_connection=db_connection,
+                table_name=table_name,
+                data_dict=data
+            )
+
+            if not success:
+                print(
+                    Fore.LIGHTRED_EX
+                    + f"Data was not inserted."
+                    + Style.RESET_ALL
+                )
+
+                print(message)
+
+                return False
 
     print(
         f"\n{table_name} table has been processed."

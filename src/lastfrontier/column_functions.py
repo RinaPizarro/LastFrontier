@@ -125,3 +125,19 @@ def output_to_dict(headers_output, values_output):
     )
 
     return True, my_dict
+
+def output_records_list(output):
+
+    if isinstance(output, dict):
+
+        return [output]
+
+    elif isinstance(output, list):
+
+        return [
+            item
+            for item in output
+            if isinstance(item, dict)
+        ]
+
+    return []

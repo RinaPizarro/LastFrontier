@@ -139,3 +139,4 @@ def load_config():
         db_pass=os.environ["DB_PASS"],
         db_port=db_port,
     )
+

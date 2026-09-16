@@ -4,6 +4,7 @@
     "params": [],
     "api_source": "None"
   },
+
   "weather": {
     "type": "Fact",
     "api_func": "current_weather_api",
@@ -14,6 +15,7 @@
     ],
     "api_source": "Open Weather"
   },
+
   "air_pollution": {
     "type": "Fact",
     "api_func": "air_pollution_api",
@@ -24,6 +26,7 @@
     ],
     "api_source": "Open Weather"
   },
+  
   "traffic_events": {
     "type": "Fact",
     "api_func": "traffic_events_api",
