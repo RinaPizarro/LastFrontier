@@ -7,11 +7,11 @@ from lastfrontier.custom_cities import (
     clean_cities
 )
 
-from lastfrontier.open_weather_api import (
+from lastfrontier.api_open_weather import (
     current_weather_api,
     lat_and_long,
     air_pollution_api
-)
+) 
 
 from lastfrontier.sql_server import (
     connection,

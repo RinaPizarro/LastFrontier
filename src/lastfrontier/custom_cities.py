@@ -45,4 +45,3 @@ def clean_cities(limit: int = None):
     save_custom_cities(unique_cities)
 
     return unique_cities
-
