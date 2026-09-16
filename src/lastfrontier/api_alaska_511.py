@@ -16,6 +16,3 @@ def traffic_events_api(
         return False, "The API key does not work."
     else:
         return None, "Unable to retrieve weather. Please try again later."
-
-
-status, message = traffic_events_api()
