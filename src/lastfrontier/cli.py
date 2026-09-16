@@ -130,11 +130,18 @@ def main():
     ),
 
     add_table_parser(
-            subparsers,
-            command="road-conditions",
-            table_name="road_conditions",
-            help_text="Table containing road conditions across Alaska.",
-        )
+        subparsers,
+        command="road-conditions",
+        table_name="road_conditions",
+        help_text="Table containing road conditions across Alaska.",
+    )
+
+    add_table_parser(
+        subparsers,
+        command="airports",
+        table_name="airports",
+        help_text="Table containing airports across Alaska.",
+    )
 
     try:
 
