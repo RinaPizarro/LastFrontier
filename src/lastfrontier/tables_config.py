@@ -30,7 +30,6 @@ from lastfrontier.column_functions import (
 from colorama import Fore, Style
 from pathlib import Path
 
-import os
 import json
 
 TABLES_FILE = (Path(__file__).resolve().parent / "data" / "tables.json")
@@ -57,9 +56,9 @@ def get_table_config(table_name):
     return TABLE_CONFIG[table_name]
 
 def get_api_function(table_name):
-    config = get_table_config(table_name)
+    table_config = get_table_config(table_name)
 
-    api_name = config.get("api_func")
+    api_name = table_config.get("api_func")
 
     if not api_name:
         return False, None
@@ -73,15 +72,15 @@ def get_api_function(table_name):
 
     return True, api_function
 
-def required_table_create(table_name):
-    db_status, db_connection = connection()
+def required_table_create(table_name, config):
+    db_status, db_connection = connection(config)
 
     if not db_status:
         return False, db_connection
 
-    config = get_table_config(table_name)
+    table_config = get_table_config(table_name)
 
-    table_type = config.get("type")
+    table_type = table_config.get("type")
 
     if table_type == "Master":
 
@@ -111,16 +110,9 @@ def required_table_create(table_name):
             output=city_output
         )
 
-    elif config.get("api_func"):
+    elif table_config.get("api_func"):
 
-        api_key = os.getenv(
-            "OPEN_WEATHER_API_KEY"
-        )
-
-        if not api_key:
-            return False, (
-                "OPEN_WEATHER_API_KEY is not set."
-            )
+        api_key = config.open_weather_api_key
 
         cities_list = clean_cities()
 
@@ -287,22 +279,11 @@ def insert_master_table(
 
 def insert_api_table(
     table_name,
-    db_connection
+    db_connection,
+    config
 ):
 
-    api_key = os.getenv(
-        "OPEN_WEATHER_API_KEY"
-    )
-
-    if not api_key:
-
-        print(
-            Fore.LIGHTRED_EX
-            + "OPEN_WEATHER_API_KEY is not set."
-            + Style.RESET_ALL
-        )
-
-        return False
+    api_key = config.open_weather_api_key
 
     success, api_function = get_api_function(
         table_name
@@ -416,9 +397,9 @@ def insert_api_table(
 
     return True
 
-def required_table_insert(table_name):
+def required_table_insert(table_name, config):
 
-    db_status, db_connection = connection()
+    db_status, db_connection = connection(config)
 
     if not db_status:
         return False, db_connection
@@ -433,15 +414,16 @@ def required_table_insert(table_name):
             f"lastfrontier -c {table_name.replace('_', '-')}"
         )
 
-    config = get_table_config(table_name)
+    table_config = get_table_config(table_name)
 
-    api_name = config.get("api_func")
+    api_name = table_config.get("api_func")
 
     if api_name:
 
         success = insert_api_table(
             table_name=table_name,
-            db_connection=db_connection
+            db_connection=db_connection,
+            config=config
         )
 
     else:

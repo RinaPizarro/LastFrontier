@@ -3,13 +3,13 @@ import os
 
 from psycopg2 import sql
 
-def connection():
+def connection(config):
     try:
-        user_host = os.getenv("DB_HOST")
-        user_db_name = os.getenv("DB_NAME")
-        user_name = os.getenv("DB_USER")
-        user_password = os.getenv("DB_PASS")
-        user_port = os.getenv("DB_PORT")
+        user_host = config.db_host
+        user_db_name = config.db_name
+        user_name = config.db_user
+        user_password = config.db_pass
+        user_port = config.db_port
 
         connection = psycopg2.connect(
             host=user_host,

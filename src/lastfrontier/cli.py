@@ -1,11 +1,10 @@
 import argparse
 import sys
-from pathlib import Path
 
-from dotenv import load_dotenv
-
-ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(ENV_FILE)
+from lastfrontier.config import (
+    configure,
+    load_config
+)
 
 from lastfrontier.tables_config import (
     required_table_create,
@@ -35,7 +34,7 @@ def main():
     )
 
     # Actions
-    actions = parser.add_mutually_exclusive_group(required=True)
+    actions = parser.add_mutually_exclusive_group()
 
     actions.add_argument(
         "-c",
@@ -55,7 +54,12 @@ def main():
     subparsers = parser.add_subparsers(
         dest="command",
         metavar="<command>",
-        required=True,
+    )
+
+    subparsers.add_parser(
+        "configure",
+        help="create or update LastFrontier configuration",
+        description="Create or update LastFrontier configuration.",
     )
 
     add_table_parser(
@@ -83,10 +87,25 @@ def main():
 
         args = parser.parse_args()
 
+        if args.command == "configure":
+
+            configure()
+
+            return
+
+        if not args.create and not args.insert:
+
+            parser.error(
+                "one of -c/--create or -i/--insert is required"
+            )
+
+        config = load_config()
+
         if args.create:
 
             success, message = required_table_create(
-                table_name=args.table_name
+                table_name=args.table_name,
+                config=config
             )
 
             print(message)
@@ -97,7 +116,8 @@ def main():
         elif args.insert:
 
             success, message = required_table_insert(
-                table_name=args.table_name
+                table_name=args.table_name,
+                config=config
             )
 
             if message:
