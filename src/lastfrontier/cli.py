@@ -12,7 +12,6 @@ from lastfrontier.tables_config import (
     required_table_insert,
 )
 
-
 def add_table_parser(subparsers, command, table_name, help_text):
     table_parser = subparsers.add_parser(
         command,
