@@ -14,6 +14,7 @@ ENV_FILE = CONFIG_DIR / ".env"
 class Config:
     open_weather_api_key: str
     census_api: str
+    alaska_511_api: str
     db_host: str
     db_name: str
     db_user: str
@@ -32,6 +33,7 @@ def configure():
 
     open_weather_api_key = getpass("OpenWeather API key: ")
     census_api = getpass("Census API key: ")
+    alaska_511_api = getpass("Alaska 511 API key: ")
 
     db_host = input("Database host [localhost]: ").strip() or "localhost"
     db_name = input("Database name [lastfrontier]: ").strip() or "lastfrontier"
@@ -42,6 +44,7 @@ def configure():
     ENV_FILE.write_text(
         f"""OPEN_WEATHER_API_KEY={open_weather_api_key}
             CENSUS_API={census_api}
+            ALASKA_511_API={alaska_511_api}
             DB_HOST={db_host}
             DB_NAME={db_name}
             DB_USER={db_user}
@@ -71,6 +74,7 @@ def load_config():
     required = [
         "OPEN_WEATHER_API_KEY",
         "CENSUS_API",
+        "ALASKA_511_API",
         "DB_HOST",
         "DB_NAME",
         "DB_USER",
@@ -99,6 +103,7 @@ def load_config():
     return Config(
         open_weather_api_key=os.environ["OPEN_WEATHER_API_KEY"],
         census_api=os.environ["CENSUS_API"],
+        alaska_511_api=os.environ["ALASKA_511_API"],
         db_host=os.environ["DB_HOST"],
         db_name=os.environ["DB_NAME"],
         db_user=os.environ["DB_USER"],
