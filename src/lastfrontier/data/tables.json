@@ -26,10 +26,19 @@
     ],
     "api_source": "Open Weather"
   },
-  
+
   "traffic_events": {
     "type": "Fact",
     "api_func": "traffic_events_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "Alaska 511"
+  },
+
+  "road_conditions": {
+    "type": "Fact",
+    "api_func": "road_conditions_api",
     "params": [
       "api_key"
     ],

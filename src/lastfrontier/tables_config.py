@@ -10,11 +10,12 @@ from lastfrontier.custom_cities import (
 from lastfrontier.api_open_weather import (
     current_weather_api,
     lat_and_long,
-    air_pollution_api
+    air_pollution_api,
 ) 
 
 from lastfrontier.api_alaska_511 import (
-    traffic_events_api
+    traffic_events_api,
+    road_conditions_api
 )
 
 from lastfrontier.sql_server import (
@@ -42,7 +43,8 @@ TABLES_FILE = (Path(__file__).resolve().parent / "data" / "tables.json")
 API_FUNCTIONS = {
     "current_weather_api": current_weather_api,
     "air_pollution_api": air_pollution_api,
-    "traffic_events_api": traffic_events_api
+    "traffic_events_api": traffic_events_api,
+    "road_conditions_api": road_conditions_api
 }
 
 def load_table_config():

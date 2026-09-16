@@ -127,7 +127,14 @@ def main():
         command="traffic-events",
         table_name="traffic_events",
         help_text="Table containing traffic events across Alaska.",
-    )
+    ),
+
+    add_table_parser(
+            subparsers,
+            command="road-conditions",
+            table_name="road_conditions",
+            help_text="Table containing road conditions across Alaska.",
+        )
 
     try:
 
