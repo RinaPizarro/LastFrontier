@@ -122,6 +122,13 @@ def main():
         help_text="Table containing current weather data in select cities.",
     )
 
+    add_table_parser(
+        subparsers,
+        command="traffic-events",
+        table_name="traffic_events",
+        help_text="Table containing traffic events across Alaska.",
+    )
+
     try:
 
         args = parser.parse_args()
