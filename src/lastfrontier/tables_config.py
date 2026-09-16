@@ -13,6 +13,10 @@ from lastfrontier.api_open_weather import (
     air_pollution_api
 ) 
 
+from lastfrontier.api_alaska_511 import (
+    traffic_events_api
+)
+
 from lastfrontier.sql_server import (
     connection,
     create_table,
@@ -34,10 +38,10 @@ import json
 
 TABLES_FILE = (Path(__file__).resolve().parent / "data" / "tables.json")
 
-
 API_FUNCTIONS = {
     "current_weather_api": current_weather_api,
-    "air_pollution_api": air_pollution_api
+    "air_pollution_api": air_pollution_api,
+    "traffic_events_api": traffic_events_api
 }
 
 def load_table_config():
@@ -276,14 +280,23 @@ def insert_master_table(
 
     return True
 
+def insert_api_table(table_name, db_connection, config):
 
-def insert_api_table(
-    table_name,
-    db_connection,
-    config
-):
+    table_config = get_table_config(table_name)
+    table_api_source = table_config.get("api_source")
 
-    api_key = config.open_weather_api_key
+    if table_api_source == "Open Weather":
+        api_key = config.open_weather_api_key
+    elif table_api_source == "Alaska 511":
+        api_key = config.alaska_511_api
+    else:
+        print(
+            Fore.LIGHTRED_EX
+            + f"Unknown API source for {table_name}."
+            + Style.RESET_ALL
+        )
+
+        return False
 
     success, api_function = get_api_function(
         table_name
@@ -302,45 +315,117 @@ def insert_api_table(
 
         return False
 
-    cities_list = clean_cities()
+    coord_required = table_config.get("coord_required")
 
-    for city in cities_list:
+    if coord_required:
 
-        print(
-            f"\nGetting data for {city}..."
-        )
+        cities_list = clean_cities()
 
-        lat, lon = lat_and_long(
-            city_name=city
-        )
-
-        if lat is None or lon is None:
+        for city in cities_list:
 
             print(
-                Fore.LIGHTRED_EX
-                + f"Unable to find coordinates for {city}."
+                f"\nGetting data for {city}..."
+            )
+
+            lat, lon = lat_and_long(
+                city_name=city
+            )
+
+            if lat is None or lon is None:
+
+                print(
+                    Fore.LIGHTRED_EX
+                    + f"Unable to find coordinates for {city}."
+                    + Style.RESET_ALL
+                )
+
+                continue
+
+            status, api_output = api_function(
+                lat=lat,
+                lon=lon,
+                api_key=api_key
+            )
+
+            if not status:
+
+                print(
+                    Fore.LIGHTRED_EX
+                    + f"Unable to retrieve data for {city}."
+                    + Style.RESET_ALL
+                )
+
+                print(api_output)
+
+                continue
+
+            headers = output_headers_list(
+                output=api_output
+            )
+
+            values = output_values_list(
+                output=api_output
+            )
+
+            success, data = output_to_dict(
+                headers_output=headers,
+                values_output=values
+            )
+
+            if not success:
+
+                print(
+                    Fore.LIGHTRED_EX
+                    + f"Unable to process data for {city}."
+                    + Style.RESET_ALL
+                )
+
+                print(data)
+
+                continue
+
+            success, message = insert_data(
+                db_connection=db_connection,
+                table_name=table_name,
+                data_dict=data
+            )
+
+            if not success:
+
+                print(
+                    Fore.LIGHTRED_EX
+                    + f"{city} was not inserted."
+                    + Style.RESET_ALL
+                )
+
+                print(message)
+
+                continue
+
+            print(
+                Fore.LIGHTGREEN_EX
+                + f"{city} imported successfully."
                 + Style.RESET_ALL
             )
 
-            continue
+    else:
 
         status, api_output = api_function(
-            lat=lat,
-            lon=lon,
+            lat=0,
+            lon=0,
             api_key=api_key
         )
 
         if not status:
-
             print(
                 Fore.LIGHTRED_EX
-                + f"Unable to retrieve data for {city}."
+                + f"Unable to retrieve data."
                 + Style.RESET_ALL
             )
 
             print(api_output)
 
-            continue
+            return False
 
         headers = output_headers_list(
             output=api_output
@@ -356,16 +441,15 @@ def insert_api_table(
         )
 
         if not success:
-
             print(
                 Fore.LIGHTRED_EX
-                + f"Unable to process data for {city}."
+                + f"Unable to process data."
                 + Style.RESET_ALL
             )
 
             print(data)
 
-            continue
+            return False
 
         success, message = insert_data(
             db_connection=db_connection,
@@ -374,22 +458,15 @@ def insert_api_table(
         )
 
         if not success:
-
             print(
                 Fore.LIGHTRED_EX
-                + f"{city} was not inserted."
+                + f"Data was not inserted."
                 + Style.RESET_ALL
             )
 
             print(message)
 
-            continue
-
-        print(
-            Fore.LIGHTGREEN_EX
-            + f"{city} imported successfully."
-            + Style.RESET_ALL
-        )
+            return False
 
     print(
         f"\n{table_name} table has been processed."

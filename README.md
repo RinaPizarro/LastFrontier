@@ -22,3 +22,6 @@ This file contains the list of all cities expected to be used when retrieving we
 1. Copy .env.example to .env
 2. Add your API keys to .env
 3. Run the program
+
+## Resources
+https://511.alaska.gov/developers/doc
