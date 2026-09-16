@@ -2,7 +2,8 @@
   "alaskan_cities": {
     "type": "Master",
     "params": [],
-    "api_source": "None"
+    "api_source": "None",
+    "custom_cities_required": false
   },
 
   "weather": {
@@ -13,7 +14,8 @@
       "lon",
       "api_key"
     ],
-    "api_source": "Open Weather"
+    "api_source": "Open Weather",
+    "custom_cities_required": true
   },
 
   "air_pollution": {
@@ -24,7 +26,8 @@
       "lon",
       "api_key"
     ],
-    "api_source": "Open Weather"
+    "api_source": "Open Weather",
+    "custom_cities_required": true
   },
 
   "traffic_events": {
@@ -33,7 +36,8 @@
     "params": [
       "api_key"
     ],
-    "api_source": "Alaska 511"
+    "api_source": "Alaska 511",
+    "custom_cities_required": false
   },
 
   "road_conditions": {
@@ -42,7 +46,8 @@
     "params": [
       "api_key"
     ],
-    "api_source": "Alaska 511"
+    "api_source": "Alaska 511",
+    "custom_cities_required": false
   },
 
   "airports": {
@@ -51,6 +56,7 @@
     "params": [
       "api_key"
     ],
-    "api_source": "Alaska 511"
+    "api_source": "Alaska 511",
+    "custom_cities_required": false
   }
 }

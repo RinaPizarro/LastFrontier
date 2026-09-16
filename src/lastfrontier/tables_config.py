@@ -101,6 +101,7 @@ def call_api(
 
     return api_function(**kwargs)
 
+#FIXME needs to remove custom tables if using api 
 def required_table_create(table_name, config):
     db_status, db_connection = connection(config)
 
