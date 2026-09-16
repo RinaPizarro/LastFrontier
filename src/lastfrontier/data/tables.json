@@ -37,8 +37,17 @@
   },
 
   "road_conditions": {
-    "type": "Fact",
+    "type": "Master",
     "api_func": "road_conditions_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "Alaska 511"
+  },
+
+  "airports": {
+    "type": "Master",
+    "api_func": "airports_api",
     "params": [
       "api_key"
     ],

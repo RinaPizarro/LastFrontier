@@ -15,7 +15,8 @@ from lastfrontier.api_open_weather import (
 
 from lastfrontier.api_alaska_511 import (
     traffic_events_api,
-    road_conditions_api
+    road_conditions_api,
+    airport_api
 )
 
 from lastfrontier.sql_server import (
@@ -44,13 +45,13 @@ API_FUNCTIONS = {
     "current_weather_api": current_weather_api,
     "air_pollution_api": air_pollution_api,
     "traffic_events_api": traffic_events_api,
-    "road_conditions_api": road_conditions_api
+    "road_conditions_api": road_conditions_api,
+    "airports_api": airport_api
 }
 
 def load_table_config():
     with open(TABLES_FILE, "r") as file:
         return json.load(file)
-
 
 def get_table_config(table_name):
     TABLE_CONFIG = load_table_config()
