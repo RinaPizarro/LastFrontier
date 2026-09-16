@@ -3,7 +3,7 @@ import sys
 import os
 
 from dotenv import load_dotenv
-from lastfrontier.open_weather_api import current_weather_api, lat_and_long
+from lastfrontier.api_open_weather import current_weather_api, lat_and_long
 from colorama import Fore, Back, Style, init
 from country_state_city import City
 
