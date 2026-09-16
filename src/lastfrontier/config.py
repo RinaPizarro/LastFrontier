@@ -35,18 +35,8 @@ def configure():
         "OpenWeather API key: "
     )
 
-    print(
-        f"OpenWeather API key entered: "
-        f"{open_weather_api_key}"
-    )
-
     census_api = getpass(
         "Census API key: "
-    )
-
-    print(
-        f"Census API key entered: "
-        f"{census_api}"
     )
 
     db_host = input(
@@ -85,16 +75,6 @@ DB_PORT={db_port}
         f"\nConfiguration saved to:\n{ENV_FILE}"
     )
 
-    print(
-        f"\nSaved OpenWeather API key: "
-        f"{open_weather_api_key}"
-    )
-
-    print(
-        f"Saved Census API key: "
-        f"{census_api}"
-    )
-
 
 def load_config():
 
@@ -109,16 +89,6 @@ def load_config():
     load_dotenv(
         ENV_FILE,
         override=True,
-    )
-
-    print(
-        f"\nLoaded OpenWeather API key: "
-        f"{os.getenv('OPEN_WEATHER_API_KEY')}"
-    )
-
-    print(
-        f"Loaded Census API key: "
-        f"{os.getenv('CENSUS_API')}"
     )
 
     required = [
