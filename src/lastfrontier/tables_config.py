@@ -273,7 +273,9 @@ def insert_master_table(
             continue
 
         print(
-            f"{city} imported successfully."
+            Fore.LIGHTGREEN_EX
+            + f"{city} imported successfully."
+            + Style.RESET_ALL
         )
 
     print(

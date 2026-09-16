@@ -97,9 +97,12 @@ def main():
 
         elif args.insert:
 
-            success = required_table_insert(
+            success, message = required_table_insert(
                 table_name=args.table_name
             )
+
+            if message:
+                print(message)
 
             if not success:
                 sys.exit(1)
@@ -110,7 +113,6 @@ def main():
         traceback.print_exc()
 
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
