@@ -404,7 +404,7 @@ def insert_api_table(
         )
 
     print(
-        f"{table_name} table has been processed."
+        f"\n{table_name} table has been processed."
     )
 
     return True
