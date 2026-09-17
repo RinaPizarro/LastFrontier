@@ -36,10 +36,7 @@ def flatten_dict(
 
         elif isinstance(value, list):
 
-            columns[new_key] = json.dumps(
-                value,
-                ensure_ascii=False
-            )
+            columns[new_key] = value
 
         else:
 
