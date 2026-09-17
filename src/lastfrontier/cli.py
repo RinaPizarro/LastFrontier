@@ -150,6 +150,13 @@ def main():
         help_text="Table containing electric vehicle chargers across Alaska.",
     )
 
+    add_table_parser(
+        subparsers,
+        command="wildfire-incidents",
+        table_name="wildfire_incidents",
+        help_text="Table containing wildfire incidents across Alaska.",
+    )
+
     try:
 
         args = parser.parse_args()
