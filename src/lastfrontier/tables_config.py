@@ -18,7 +18,8 @@ from lastfrontier.api_alaska_511 import (
     road_conditions_api,
     airport_api,
     electric_vehicle_chargers_api,
-    wildfire_incidents_api
+    wildfire_incidents_api,
+    cameras_api
 )
 
 from lastfrontier.sql_server import (
@@ -50,7 +51,8 @@ API_FUNCTIONS = {
     "road_conditions_api": road_conditions_api,
     "airports_api": airport_api,
     "electric_vehicle_chargers_api": electric_vehicle_chargers_api,
-    "wildfire_incidents_api": wildfire_incidents_api
+    "wildfire_incidents_api": wildfire_incidents_api,
+    "cameras_api": cameras_api
 }
 
 def load_table_config():

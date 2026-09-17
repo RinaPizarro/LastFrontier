@@ -72,8 +72,18 @@
   },
 
   "wildfire_incidents": {
-    "type": "Master",
+    "type": "Fact",
     "api_func": "wildfire_incidents_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "Alaska 511",
+    "custom_cities_required": false
+  },
+
+  "cameras": {
+    "type": "Master",
+    "api_func": "cameras_api",
     "params": [
       "api_key"
     ],
