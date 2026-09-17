@@ -1,6 +1,7 @@
 {
   "alaskan_cities": {
     "type": "Master",
+    "api_func": "None",
     "params": [],
     "api_source": "None",
     "custom_cities_required": false

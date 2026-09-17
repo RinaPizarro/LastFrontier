@@ -110,37 +110,9 @@ def required_table_create(table_name, config):
 
     table_config = get_table_config(table_name)
 
-    table_type = table_config.get("type")
+    table_custom_required = table_config.get("custom_cities_required")
 
-    if table_type == "Master":
-
-        cities_list = all_alaskan_cities(count=1)
-
-        if not cities_list:
-            return False, (
-                "No Alaskan cities were found."
-            )
-
-        city = cities_list[0]
-
-        city_output = alaskan_city_coord(
-            city_name=city
-        )
-
-        if city_output is None:
-            return False, (
-                f"Unable to find coordinates for {city}."
-            )
-
-        headers_list = output_headers_list(
-            output=city_output
-        )
-
-        values_list = output_values_list(
-            output=city_output
-        )
-
-    elif table_config.get("api_func"):
+    if table_config.get("api_func"):
 
         if table_config.get("api_source") == "Open Weather":
             api_key = config.open_weather_api_key
@@ -211,6 +183,34 @@ def required_table_create(table_name, config):
             output=records[0]
         )
 
+    elif (not table_config.get("api_func")) and (table_custom_required == True):
+
+        cities_list = all_alaskan_cities(count=1)
+
+        if not cities_list:
+            return False, (
+                "No Alaskan cities were found."
+            )
+
+        city = cities_list[0]
+
+        city_output = alaskan_city_coord(
+            city_name=city
+        )
+
+        if city_output is None:
+            return False, (
+                f"Unable to find coordinates for {city}."
+            )
+
+        headers_list = output_headers_list(
+            output=city_output
+        )
+
+        values_list = output_values_list(
+            output=city_output
+        )
+
     else:
 
         return False, (
@@ -228,7 +228,7 @@ def required_table_create(table_name, config):
     return status, message
 
 
-def insert_master_table(
+def insert_required_custom_table(
     table_name,
     db_connection
 ):
@@ -590,7 +590,7 @@ def required_table_insert(table_name, config):
 
     else:
 
-        success = insert_master_table(
+        success = insert_required_custom_table(
             table_name=table_name,
             db_connection=db_connection
         )
