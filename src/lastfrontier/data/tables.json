@@ -59,5 +59,15 @@
     ],
     "api_source": "Alaska 511",
     "custom_cities_required": false
+  },
+
+  "electric_vehicle_chargers": {
+    "type": "Master",
+    "api_func": "electric_vehicle_chargers_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "Alaska 511",
+    "custom_cities_required": false
   }
 }
