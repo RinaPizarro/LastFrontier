@@ -143,6 +143,13 @@ def main():
         help_text="Table containing airports across Alaska.",
     )
 
+    add_table_parser(
+        subparsers,
+        command="electric-vehicles",
+        table_name="electric_vehicle_chargers",
+        help_text="Table containing electric vehicle chargers across Alaska.",
+    )
+
     try:
 
         args = parser.parse_args()
