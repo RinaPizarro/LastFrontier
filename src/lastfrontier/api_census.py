@@ -5,13 +5,17 @@ import requests
 api_key = os.getenv("CENSUS_API")
 
 # Time Series Current Population Survey
-def poverty_api(
-    api_key="f5b9a4d1cf2b008dbffb654a0275b544a966d2a1",
+def acs_1_year_api(
+    api_key,
     ):
 
-    url = "http://api.census.gov/data/timeseries/poverty/histpov2"
+    url = "http://api.census.gov/data/2024/acs/acs1"
 
-    params = {"key": api_key, "time": 2018}
+    params = {
+        "get": "NAME",
+        "for": "state:02",
+        "key": api_key
+    }
 
     response = requests.get(url, params=params)
     print(response)
@@ -23,5 +27,6 @@ def poverty_api(
     else:
         return None, "Unable to retrieve wildfire incidents. Please try again later."
 
-status, message = poverty_api()
+status, message = acs_1_year_api()
 print(status)
+print(message)

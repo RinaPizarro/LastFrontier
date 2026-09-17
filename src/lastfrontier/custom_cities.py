@@ -10,7 +10,6 @@ JSON_FILE = (
     / "custom_cities.json"
 )
 
-
 def load_custom_cities():
     with open(JSON_FILE, "r") as file:
         return json.load(file)
