@@ -15,7 +15,6 @@ def load_custom_cities():
     with open(JSON_FILE, "r") as file:
         return json.load(file)
 
-
 def save_custom_cities(cities):
     with open(JSON_FILE, "w") as file:
         json.dump(cities, file, indent=2)

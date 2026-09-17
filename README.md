@@ -24,4 +24,6 @@ This file contains the list of all cities expected to be used when retrieving we
 3. Run the program
 
 ## Resources
+https://openweathermap.org/api/current?collection=current_forecast
 https://511.alaska.gov/developers/doc
+https://www2.census.gov/data/api-documentation/api-user-guide.pdf
