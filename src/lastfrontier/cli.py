@@ -106,6 +106,11 @@ def main():
         action="store_true",
     )
 
+    configure_parser.add_argument(
+        "--cde-api",
+        action="store_true",
+    )
+
     add_table_parser(
         subparsers,
         command="alaskan-cities",
@@ -203,6 +208,11 @@ def main():
             if args.legiscan_api:
                 updates["LEGISCAN_API"] = getpass(
                     "Legiscan API key: "
+                )
+
+            if args.fbi_cde_api:
+                updates["FBI_CDE_API"] = getpass(
+                    "CDE API key: "
                 )
 
             updates = {

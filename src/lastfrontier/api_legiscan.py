@@ -7,6 +7,7 @@ import os
 
 current_year = (date.today()).year
 
+#TODO
 #STATUS: ERROR IF SET IS EMPTY
 def dataset_list_api(api_key):
     url = "https://api.legiscan.com/"

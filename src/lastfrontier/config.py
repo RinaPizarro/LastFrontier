@@ -16,6 +16,7 @@ class Config:
     census_api: str
     alaska_511_api: str
     legiscan_api: str
+    fbi_cde_api: str
     db_host: str
     db_name: str
     db_user: str
@@ -36,6 +37,7 @@ def configure():
     census_api = getpass("Census API key: ")
     alaska_511_api = getpass("Alaska 511 API key: ")
     legiscan_api = getpass("Legiscan API key: ")
+    fbi_cde_api = getpass("CDE API key:")
 
     db_host = input("Database host [localhost]: ").strip() or "localhost"
     db_name = input("Database name [lastfrontier]: ").strip() or "lastfrontier"
@@ -48,6 +50,7 @@ def configure():
 CENSUS_API={census_api}
 ALASKA_511_API={alaska_511_api}
 LEGISCAN_API={legiscan_api}
+FBI_CDE_API={fbi_cde_api}
 DB_HOST={db_host}
 DB_NAME={db_name}
 DB_USER={db_user}
@@ -112,6 +115,7 @@ def load_config():
         "CENSUS_API",
         "ALASKA_511_API",
         "LEGISCAN_API",
+        "FBI_CDE_API"
         "DB_HOST",
         "DB_NAME",
         "DB_USER",
@@ -142,6 +146,7 @@ def load_config():
         census_api=os.environ["CENSUS_API"],
         alaska_511_api=os.environ["ALASKA_511_API"],
         legiscan_api=os.environ["LEGISCAN_API"],
+        fbi_cde_api=os.environ["FBI_CDE_API"],
         db_host=os.environ["DB_HOST"],
         db_name=os.environ["DB_NAME"],
         db_user=os.environ["DB_USER"],
