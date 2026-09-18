@@ -188,6 +188,13 @@ def main():
         help_text="Table containing homides per FBI across Alaska.",
     )
 
+    add_table_parser(
+        subparsers,
+        command="hate-crimes",
+        table_name="hate_crimes",
+        help_text="Table containing hate crimes per FBI across Alaska.",
+    )
+
     try:
 
         args = parser.parse_args()

@@ -34,7 +34,7 @@ def arrest_api(api_key):
     if response.status_code == 200:
         content = response.json()
         content = {
-            "Record Date": dates,
+            "record_date": dates,
             **content
         }
         return True, content
@@ -68,7 +68,75 @@ def homocide_api(api_key):
     if response.status_code == 200:
         content = response.json()
         content = {
-            "Record Date": dates,
+            "record_date": dates,
+            **content
+        }
+        return True, content
+    elif response.status_code == 401:
+        return False, "The API key does not work."
+    else:
+        try:
+            content = response.json()
+            content = {
+                "Record Date": dates,
+                **content
+            }
+            return True, content
+        except requests.exceptions.JSONDecodeError:
+            return False, response.text
+
+def arrest_api(api_key):
+    url = "https://api.usa.gov/crime/fbi/cde/arrest/state/AK/all"
+
+    dates = date_param()
+
+    params = {
+        "type": "totals",
+        "from": dates,
+        "to": dates,
+        "API_KEY": api_key
+    }
+    
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        content = response.json()
+        content = {
+            "record_date": dates,
+            **content
+        }
+        return True, content
+    elif response.status_code == 401:
+        return False, "The API key does not work."
+    else:
+        try:
+            content = response.json()
+            content = {
+                "Record Date": dates,
+                **content
+            }
+            return True, content
+        except requests.exceptions.JSONDecodeError:
+            return False, response.text
+
+def hate_crime_api(api_key):
+    url = "https://api.usa.gov/crime/fbi/cde/hate-crime/state/AK/all"
+
+    dates = date_param()
+
+    params = {
+        "type": "totals",
+        "from": dates,
+        "to": dates,
+        "API_KEY": api_key
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        content = response.json()
+        content = {
+            "record_date": dates,
             **content
         }
         return True, content

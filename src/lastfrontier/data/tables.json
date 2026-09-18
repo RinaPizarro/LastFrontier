@@ -109,5 +109,16 @@
     ],
     "api_source": "CDE",
     "custom_cities_required": false
+  },
+
+  "hate_crimes": {
+    "type": "Fact",
+    "api_func": "hate_crime_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "CDE",
+    "custom_cities_required": false
   }
+
 }

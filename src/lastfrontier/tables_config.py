@@ -15,7 +15,8 @@ from lastfrontier.api_open_weather import (
 
 from lastfrontier.api_cde import (
     arrest_api,
-    homocide_api
+    homocide_api,
+    hate_crime_api
 )
 
 from lastfrontier.api_alaska_511 import (
@@ -59,7 +60,8 @@ API_FUNCTIONS = {
     "wildfire_incidents_api": wildfire_incidents_api,
     "cameras_api": cameras_api,
     "arrest_api": arrest_api,
-    "homocide_api": homocide_api
+    "homocide_api": homocide_api,
+    "hate_crime_api": hate_crime_api
 }
 
 def load_table_config():
