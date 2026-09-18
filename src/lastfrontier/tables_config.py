@@ -14,7 +14,7 @@ from lastfrontier.api_open_weather import (
 ) 
 
 from lastfrontier.api_cde import (
-    arrest
+    arrest_api
 )
 
 from lastfrontier.api_alaska_511 import (
