@@ -101,7 +101,7 @@
     "custom_cities_required": false
   },
 
-  "homocide": {
+  "homocides": {
     "type": "Fact",
     "api_func": "homocide_api",
     "params": [
