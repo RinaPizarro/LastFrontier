@@ -35,7 +35,7 @@ def configure():
     open_weather_api_key = getpass("OpenWeather API key: ")
     census_api = getpass("Census API key: ")
     alaska_511_api = getpass("Alaska 511 API key: ")
-    legiscan_api = getpass("Legican API key: ")
+    legiscan_api = getpass("Legiscan API key: ")
 
     db_host = input("Database host [localhost]: ").strip() or "localhost"
     db_name = input("Database name [lastfrontier]: ").strip() or "lastfrontier"
@@ -81,6 +81,10 @@ def update_config(key, value):
             lines[index] = f"{key}={value}"
 
             break
+
+    else:
+
+        lines.append(f"{key}={value}")
 
     ENV_FILE.write_text(
         "\n".join(lines) + "\n",
@@ -144,4 +148,3 @@ def load_config():
         db_pass=os.environ["DB_PASS"],
         db_port=db_port,
     )
-
