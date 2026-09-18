@@ -101,6 +101,11 @@ def main():
         action="store_true",
     )
 
+    configure_parser.add_argument(
+        "--legiscan-api",
+        action="store_true",
+    )
+
     add_table_parser(
         subparsers,
         command="alaskan-cities",
@@ -193,6 +198,11 @@ def main():
             if args.alaska_511_api:
                 updates["ALASKA_511_API"] = getpass(
                     "Alaska 511 API key: "
+                )
+
+            if args.legiscan_api:
+                updates["LEGISCAN_API"] = getpass(
+                    "Legiscan API key: "
                 )
 
             updates = {
