@@ -174,6 +174,13 @@ def main():
         help_text="Table containing cameras across Alaska.",
     )
 
+    add_table_parser(
+        subparsers,
+        command="arrests",
+        table_name="arrests",
+        help_text="Table containing arrests per FBI across Alaska.",
+    )
+
     try:
 
         args = parser.parse_args()
