@@ -181,6 +181,13 @@ def main():
         help_text="Table containing arrests per FBI across Alaska.",
     )
 
+    add_table_parser(
+        subparsers,
+        command="homocides",
+        table_name="homocides",
+        help_text="Table containing homides per FBI across Alaska.",
+    )
+
     try:
 
         args = parser.parse_args()

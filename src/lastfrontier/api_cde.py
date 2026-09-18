@@ -32,13 +32,24 @@ def arrest_api(api_key):
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
-        return True, response.json()
+        content = response.json()
+        content = {
+            "Record Date": dates,
+            **content
+        }
+        return True, content
     elif response.status_code == 401:
         return False, "The API key does not work."
     else:
-        content = response.json()
-        content["Record Date"] = dates
-        return True, content
+        try:
+            content = response.json()
+            content = {
+                "Record Date": dates,
+                **content
+            }
+            return True, content
+        except requests.exceptions.JSONDecodeError:
+            return False, response.text
 
 def homocide_api(api_key):
     url = "https://api.usa.gov/crime/fbi/cde/shr/state/AK"
@@ -51,14 +62,25 @@ def homocide_api(api_key):
         "to": dates,
         "API_KEY": api_key
     }
-    
+
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
-        return True, response.json()
+        content = response.json()
+        content = {
+            "Record Date": dates,
+            **content
+        }
+        return True, content
     elif response.status_code == 401:
         return False, "The API key does not work."
     else:
-        content = response.json()
-        content["Record Date"] = dates
-        return True, content
+        try:
+            content = response.json()
+            content = {
+                "Record Date": dates,
+                **content
+            }
+            return True, content
+        except requests.exceptions.JSONDecodeError:
+            return False, response.text
