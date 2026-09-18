@@ -107,7 +107,7 @@ def main():
     )
 
     configure_parser.add_argument(
-        "--cde-api",
+        "--fbi-cde-api",
         action="store_true",
     )
 
