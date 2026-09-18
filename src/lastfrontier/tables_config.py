@@ -13,6 +13,10 @@ from lastfrontier.api_open_weather import (
     air_pollution_api,
 ) 
 
+from lastfrontier.api_cde import (
+    arrest
+)
+
 from lastfrontier.api_alaska_511 import (
     traffic_events_api,
     road_conditions_api,
@@ -124,6 +128,8 @@ def required_table_create(table_name, config):
             api_key = config.open_weather_api_key
         elif table_config.get("api_source") == "Alaska 511":
             api_key = config.alaska_511_api
+        elif table_config.get("api_source") == "CDE":
+                    api_key = config.fbi_cde_api
         else:
             return False, (
                 f"Unknown API source for {table_name}."
@@ -346,6 +352,8 @@ def insert_api_table(table_name, db_connection, config):
         api_key = config.open_weather_api_key
     elif table_api_source == "Alaska 511":
         api_key = config.alaska_511_api
+    elif table_api_source == "CDE":
+        api_key = config.fbi_cde_api
     else:
         print(
             Fore.LIGHTRED_EX

@@ -89,5 +89,15 @@
     ],
     "api_source": "Alaska 511",
     "custom_cities_required": false
+  },
+
+  "arrest": {
+    "type": "Fact",
+    "api_func": "arrest_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "CDE",
+    "custom_cities_required": false
   }
 }

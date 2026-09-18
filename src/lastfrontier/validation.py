@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from lastfrontier.api_open_weather import current_weather_api, lat_and_long
 from colorama import Fore, Back, Style, init
 from country_state_city import City
+from datetime import datetime
 
 def valid_weather_api_key():
     api_key = os.getenv("OPEN_WEATHER_API_KEY")
@@ -65,3 +66,44 @@ def exit_input(user_input):
         sys.exit(0)
 
     return user_input
+
+def valid_month():
+    user_input = input(user_input).strip()
+
+    try:
+        month_int = int(user_input)
+        if month_int >= 1 and month_int <= 12:
+            if month_int >= 1 and month_int <= 9:
+                return f'0{month_int}'
+    except:
+        return False
+def valid_month(user_input):
+    user_input = user_input.strip()
+
+    try:
+        month_int = int(user_input)
+
+        if month_int >= 1 and month_int <= 12:
+            if month_int >= 1 and month_int <= 9:
+                return f'0{month_int}'
+            return str(month_int)
+
+        return False
+
+    except:
+        return False
+
+
+def valid_year(user_input):
+    user_input = user_input.strip()
+
+    try:
+        year_int = int(user_input)
+        current_year = datetime.now().year
+        
+        if 1900 <= year_int <= current_year:
+            return year_int
+        return False
+    
+    except:
+        return False
