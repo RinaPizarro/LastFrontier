@@ -115,7 +115,7 @@ def load_config():
         "CENSUS_API",
         "ALASKA_511_API",
         "LEGISCAN_API",
-        "FBI_CDE_API"
+        "FBI_CDE_API",
         "DB_HOST",
         "DB_NAME",
         "DB_USER",
