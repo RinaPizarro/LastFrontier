@@ -99,5 +99,15 @@
     ],
     "api_source": "CDE",
     "custom_cities_required": false
+  },
+
+  "homocide": {
+    "type": "Fact",
+    "api_func": "homocide_api",
+    "params": [
+      "api_key"
+    ],
+    "api_source": "CDE",
+    "custom_cities_required": false
   }
 }
